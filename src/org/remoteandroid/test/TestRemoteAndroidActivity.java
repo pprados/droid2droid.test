@@ -26,7 +26,7 @@ import android.view.WindowManager;
 // TODO: Approche Action bar dans le context menu
 // TODO: Ou approche action bar en simulation complète
 // TODO: Manque l'affichage de l'action bar
-
+// TODO: test
 // Checkbox pour la découverte des ProximityNetwork
 public class TestRemoteAndroidActivity extends FragmentActivity
 {
