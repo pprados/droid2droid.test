@@ -1,0 +1,120 @@
+<html><body>
+Y'en a marre d'avoir du XML partout, pour tout et n'importe quoi.
+
+A l'origine était SGML (Standard Generalized Markup Language). Issu du besoin, dans les années 80, de partager des documents et d'assurer l'interopérabilité entre les outils, SGML permet d'encoder un document textuel sous la forme d'une structure hiérarchique en indiquant par des balises le rôle joué par une portion de texte dans le contexte du document.
+
+Puis, le W3C crée une adaptation de SGML dans le contexte du Web, ce sera XML accompagné par les technologies de traitement :
+- un langage de requête/navigation dans l'arbre : XPath
+- un mécanisme de construction de grammaire : XML Schema
+- des mécanismes de réutilisation/de combinaison des grammaires : les espaces de noms
+- un langage de transformation : XSLT
+- DOM
+
+Disposant d'une syntaxe de structuration de l'information standardisée et indépendante des outils/systèmes d'exploitation, les développeurs et les industriels y voient le remède à tous leurs maux et vont le mettre à toutes les sauces : fichiers de configuration, idiomes de transport de l'information dans le cadre des Web services... Bref, ils vont oublier que XML est avant tout un modèle d'arbre conçu pour encoder des documents, vont en faire une syntaxe de transport des données structurées et, du même coup, oublier l'écosystème de standards autour de XML et qui en font un modèle de structuration puissant et souple.
+XML propose une syntaxe facile – en théorie – à analyser et permettant d'exprimer de nombreuses structures de données. Chaque marqueur peut posséder des attributs, d'autres marqueurs ou du texte.
+De plus, un marqueur peut posséder un identifiant unique ou référencer un autre marqueur via son identifiant. La syntaxe permet donc d'exprimer des propriétés via les attributs, des relations via les <span class="Apple-style-span">IDREF</span> ou des agrégations via les marqueurs présents dans d'autres marqueurs.
+La grande nouveauté par rapport à HTML, est la possibilité de fermer un marqueur facilement : <span class="Apple-style-span">&lt;br/&gt;</span>.
+
+Pour garder la compatibilité avec HTML, l'astuce consiste à fermer un marqueur en ajoutant un espace avant le slash : <span class="Apple-style-span">&lt;br /&gt;</span>. Ainsi, les analyseurs purement HTML comprennent : un marqueur br avec un attribut dont le nom est « / » et sans valeur. Les analyseurs XML comprennent qu'il s'agit d'un simple marqueur sans attribut et sans fils. Contrairement à HTML, tous les attributs doivent avoir une valeur. Il est donc possible d'écrire un fichier compatible HTML et XML.<div>
+
+<b>Quels sont les avantages de XML ?</b>
+C'est un langage textuel donc portable, facile à manipuler ou à modifier par un humain ; permettant de structurer des documents, formant un tout ; dont la syntaxe peut être décrite ; acceptant des extensions à tous les niveaux via les espaces de noms et facile à analyser.
+
+<span style="font-weight:bold;">Facilité d'analyse</span>
+Un des avantages à utiliser XML est de ne pas avoir à écrire un analyseur de fichier. C'est toujours livré avec les librairies standard des langages de développement.
+Il existe plusieurs stratégies. Une approche par flux générant des événements (SAX) en lecture seule ; une approche par flux sous le contrôle du programme en lecture et écriture (StAX) ou une approche par création d'un modèle complet du document en mémoire complètement manipulable (DOM).
+Les approches par flux, SAX ou StAX sont généralement non rigoureuses sur la syntaxe des fichiers. Les programmes piochent les informations souhaitées en ignorant les autres. Un attribut mal orthographié ne génère aucun message d'erreur. Tant pis pour l'utilisateur.
+La syntaxe étant analysée au fur et à mesure de la consommation du flux, il n'est pas possible de faire marche arrière pour connaitre le nœud père par exemple. Donc la gestion de l'historique doit être traitée par le programme. Les gestionnaires d'évènements sont souvent difficiles à écrire, à maintenir et à déverminer. Impossible d'avoir une requête XPath par exemple, avec l'approche par flux. Une partie de la syntaxe ne serait tout simplement pas disponible (<span class="Apple-style-span">../A</span>).
+Monter un arbre DOM complètement en mémoire n'est généralement pas une bonne idée, vu le nombre de nœuds à produire. Sur un serveur, c'est jouable, mais sur un téléphone portable, il ne faut pas y compter. Les approches DOM sont très sensibles aux variations de rédaction du flux XML. Un commentaire mal placé et le programme plante. Pourtant, la syntaxe est parfaitement conforme !
+Pour améliorer cela, on peut proposer de décrire la syntaxe via une DTD ou un XML Schema. C'est très compliqué et cela produit généralement une syntaxe ou une grammaire fermée. Impossible d'ajouter un nœud ou un attribut sans faire évoluer la syntaxe. De plus, le temps de traitement du flux est alors fortement augmenté.
+Sans syntaxe, impossible de traiter les attributs <span class="Apple-style-span">ID</span> ou <span class="Apple-style-span">IDREF</span> car l'analyseur ne peut, à priori, considérer tel attribut comme un identifiant. Donc, impossible de représenter les relations au sein du document. Seules les agrégations et les propriétés sont disponibles. Pour pouvoir traiter cela, le programme devient alors beaucoup, beaucoup plus complexe. Pour mémoire, les langages de développement possèdent tous la notion de relation, aucun ne possède la notion d'agrégation. C'est juste l'inverse avec XML.
+
+<span style="font-weight:bold;">Espace de noms</span>
+La possibilité d'avoir une syntaxe, combinée à l'utilisation des espaces de noms est une excellente idée, car cela permet d'offrir des points d'ancrage à une syntaxe, pour permettre son enrichissement. Avant XML, aucune autre approche ne permettait cela. Je vous invite à consulter l'excellent article « <i>XML, ouverture sur le monde</i> », dans le GNU Linux Mag N°103 de Mars 2009.
+Personne ne comprend vraiment comment sont gérés les espaces de noms. Doit-on toujours préfixer chaque marqueur et chaque attribut ? Peut-on utiliser un espace de nom par défaut, et gagner ainsi 20% sur la taille du fichier ? Dans le doute, les rédacteurs du fichier ne font que recopier les exemples. Comme ces dernières sont loin d'être des modèles de vertu, ils recopient des âneries. Comme l'âne avance, tout le monde est content. Sauf le réseau et les puristes.
+Comme personne n'y comprend rien, les syntaxes sont toujours fermées. Les espaces de noms ne servent alors à rien d'autre qu'à faire croire que l'on est un développeur qui maîtrise. Rafraîchissez-moi la mémoire, les espaces de noms ont été conçus pourquoi ?
+Le seul avantage de XML par rapport aux autres approches normalisées de structuration des documents est alors perdu. XML perd de son ouverture car les développeurs ne le maîtrisent pas.
+
+<span style="font-weight:bold;">Langage à tout faire</span>
+Comme XML permet d'exprimer beaucoup de choses, pourquoi ne pas proposer justement un langage de programmation en XML ? XSLT en est l'exemple parfait. C'est, a priori, une excellente idée ! Proposer un langage manipulant une structure dont le langage lui-même est issu. Les programmes peuvent donc s'appliquer à eux-mêmes !
+Sauf que le résultat est pitoyable. XSLT est d'une complexité folle ! Tout se mélange. Les données à produire, les données à injecter, les boucles, etc. Comme il n'est pas possible de tout exprimer en XML, il y a en fait plusieurs langages dans XSLT, selon que l'on produise un flux XML, un attribut, une requête XPath, etc.  Et comment gérer les <span class="Apple-style-span" >text()</span> ? Un retour chariot entre deux marqueurs modifie le flux produit !
+Qui peut me dire la différence fondamentale et l'impact sur les performances entre <span class="Apple-style-span" >&lt;xsl:template/&gt;</span> et <span class="Apple-style-span" >&lt;xsl:for-each/&gt;</span> ?
+Au final, le code est complètement illisible, in-maintenable et non performant. La manipulation ne peut se faire qu'en DOM. Et cela, sans parler des choix spécifiques du langage, comme l'interdiction de modifier une variable après son initialisation. Il faut alors utiliser des ruses récursives pour générer le flux voulu. Un cauchemar.
+Heureusement que XQuery est venu mettre de l'ordre dans tout cela, en acceptant clairement qu'un programme informatique ne puisse s'écrire en XML. À chacun sa syntaxe.
+
+<span style="font-weight:bold;">Structure complexe</span>
+Comme la structure des documents XML est finalement complexe à lire et à modifier, ou que l'on ne souhaite pas y placer des données confidentielles (confidentielles ? ... pas pour touts le monde), les frameworks proposent généralement la possibilité d'utiliser des variables. C'est-à-dire des données qui seront incluses dans le flux XML avant son analyse (où après si le framework est mal codé).
+<span class="Apple-style-span" >&lt;serveur ip="${IP_SERVEUR}" user="root" password="${PASSWORD}"&gt;&lt;/serveur&gt;</span>
+Et on rajoute une couche. Un peu de données dans le document XML, un peu ailleurs, dans un fichier de propriétés ou dans une base de données. Pourquoi ne pas tous mettre au même endroit ? Ça serait trop simple.
+« <span style="font-style:italic;">La complexité marque l'étendue de mon talent !</span> » JP. Troll
+
+<span style="font-weight:bold;">Problème des nœuds text()</span>
+La plus grosse difficulté provient de la gestion des nœuds textes. En effet, les développeurs comprennent : j'ai un contenu textuel dans mon marqueur donc c'est facile à analyser.
+<span class="Apple-style-span" >&lt;p&gt;Mon Texte&lt;/p&gt;</span>
+En fait, ce n'est pas comme cela que le modèle est conçu. Le marqueur possède plusieurs fils de différents types, dont des marqueurs de type text().
+<span class="Apple-style-span" >
+&lt;p&gt;
+&lt;!-- Un commentaire --&gt;
+Mon
+&lt;!-- Un autre commentaire --&gt;
+texte
+&lt;/p&gt;</span>
+
+Et encore, je fais abstraction des retours chariots et autres espaces, de ci de là. Comment traiter le marqueur &lt;p&gt; qui respecte pourtant complètement XML ? Les programmes plantent généralement. C'est d'ailleurs un bon moyen de savoir si le programme utilise SAX ou DOM ;-)
+XML est fait pour décrire des documents, pas pour des structures !
+De plus le développeur hésite souvent en concevant la syntaxe, pour savoir s'il faut utiliser un attribut ou un texte inclus. Ce n'est pas la même chose ! Et cela ne se code pas du tout de la même manière. Le plus simple, du point de vue du développeur, est d'utiliser un attribut. Au moins, il n'y a pas de difficulté à l'extraire du fichier.
+Au niveau sémantique XML, il est préférable d'utiliser un/des nœuds <span class="Apple-style-span" >text()</span> fils. Les attributs sont là pour raffiner le marqueur englobant (<span class="Apple-style-span" >&lt;div type="para"/&gt;</span>). Mais cela n'a un sens qu'avec un document textuel, pas avec une structure de donnée !
+Les choses se compliquent si le contenu peut avoir des retours chariots ou autres caractères exotiques. Dans ce cas, un texte fils est obligatoire. Et les rédacteurs du fichier vont savoir qu'il faut encadrer la valeur de <span class="Apple-style-span" >&lt;!--[CDATA[ … ]]--&gt;</span> ? C'est simple non ? « <span style="font-style:italic;">On ne vous l'avait pas dit ? Relisez les spécifications XML avant de générer des fichiers foireux</span> ».
+C'est encore plus amusant lorsque l'utilisateur exploite les variables. Quid si la valeur d'une variable possède un des caractères du diable ? Vous savez, les caractères inférieur, supérieur et esperluette... « <span style="font-style:italic;">Comme je suis un développeur rigoureux, j'encadre toujours tous les textes d'une gousse d'ail &lt;!--[CDATA[ … ]]--&gt;, ou plus souvent, j'allume un cierge</span> ».
+Au niveau sémantique, quelles informations l'utilisateur souhaite utiliser pour dresser des listes, des index ou mettre en place des interrogations ? Les réponses à ces questions peuvent guider sur la bonne syntaxe, entraînant de fait, une complexité dans le code d'analyse. En effet, ce dernier doit être capable de traiter plusieurs nœuds <span class="Apple-style-span" >text()</span> séparés de commentaire, de processing-instruction, etc.
+Un autre problème important est que chaque marqueur doit être fermé. Pourtant, certains projets produisent des logs en XML ! Donc, en cas de crash du programme (l'un des objectifs des logs), la syntaxe n'est pas valide car le marqueur principal n'est pas fermé. Et si on ferme le marqueur racine juste avant la fin du programme, faut-il l'enlever lors de son redémarrage ? Les logs ne sont alors qu'un ersatz d'XML. Pas tout à fait du XML mais presque. Du Canada Dry.
+
+<span style="font-weight:bold;">Jeux de caractères</span>
+Un autre problème, normalement correctement traité par les analyseurs XML, est le jeu de caractères utilisé pour écrire le fichier XML. Comme le fichier est facilement modifiable par un humain, avec un simple éditeur de texte, très rapidement, le fichier UTF-8 devient un fichier ISO8859-1 sous Windows, même si l'en-tête du fichier XML exprime le contraire. La portabilité du fichier est alors rapidement perdue, la facilité d'édition également.
+« <span style="font-style:italic;">Je ne comprends pas, les accents ont disparus. Pourtant chez moi ça fonctionne !</span> »
+
+<span style="font-weight:bold;">Sécurité</span>
+Comme il est possible d'inclure une DTD dans un fichier XML, il est possible d'ajouter un fichier venant de n'importe où.
+<span class="Apple-style-span" >
+&lt;!--?xml version="1.0" encoding="UTF-8"?--&gt;
+&lt;!DOCTYPE hack [ &lt;!ENTITY include SYSTEM "/etc/passwd"&gt; ]&gt;
+&lt;hack&gt;
+&amp;include;
+&lt;/hack&gt;
+</span>
+C'est très sympa d'avoir un petit fichier de paramètres dont on n'a pas la maîtrise car on n'a pas codé l'analyseur... Et hop, chaque fichier XML présente une faille de sécurité ! C'est encore plus drôle lorsque le flux XML est utilisé pour communiquer avec un serveur...
+
+<span style="font-weight:bold;">Syntaxe ouverte</span>
+Un autre problème avec XML est qu'il est possible d'exprimer la même chose de différentes façons. En ajoutant ou non des espaces, des commentaires, etc. Donc, il n'est plus possible de signer numériquement un document XML sans le normaliser. Les outils de signature doivent alors analyser le fichier pour le normer, afin de pouvoir calculer un hash sur le flux. Cette normalisation n'est pas triviale, car il faut tenir compte de la police de caractère, des entités (&amp;monentiteàmoi;) et autres subtilités. Cela représente un gros travail avant de simplement vérifier une signature numérique.
+« <span style="font-style:italic;">Mais on travaille avec du XML. Donc les performances, la consommation mémoire et autres problèmes du pauvre, on s'en moque. Tans pis pour la planète.</span> »
+
+<span style="font-weight:bold;">Services Web</span>
+Et nous avons utilisé cela pour communiquer entre serveurs Web ! Enfin, au début. Pourquoi pas ? Au moins, XML est un esperanto cross systèmes d'exploitation ! Même si cela est coûteux en termes de volume échangé, temps d'analyse, place mémoire, sécurité, il est possible d'invoquer un service Windows/PHP avec un service Linux/Java.
+Le problème est que les services marketings ont trouvé là du grain à moudre pour faire croire à la nouveauté (on propose des invocations distantes normalisées depuis bien avant les services Web, rappelez-vous RPC, CORBA, RMI, ASN.1, etc.). On a alors vendu à tour de bras des architectures SOA, des bus logiciels, des routeurs spécialisés capables de transformer les messages ! «<span style="font-style:italic;"> Oui, oui, ma petite dame. Sans modifier les programmes on peut les faire communiquer !</span> ». Mon œil ! Qui fera croire à un développeur que n'importe quel modèle est transformable en un autre ? Comme les vendeurs sont convaincants (ont-il payé des bakchichs ?), les services informatiques ont accepté et ont acquis des produits hors de prix, capables de faire la pluie et le beau temps, en modifiant deux trois paramètres. Enfin, … sur le papier ou dans les démos.
+Dans la vraie vie, celle des développeurs - qu'on ose parfois appeler ingénieurs -, seuls les projets internes communiquent via des services Web. Donc, le client et le serveur sont intimement liés. Ils se connaissent tellement bien, qu'il n'est pas possible de modifier l'un sans modifier l'autre.
+Pourquoi ne pas utiliser alors des approches plus efficaces, en binaire ? Il ne faut pas oublier que le rapport signal / bruit des flux XML est très, mais alors très, très mauvais ! Pour quelques octets, il faut dépenser plusieurs Ko. (Certains vont jusqu'à modifier les marqueurs pour les raccourcis à un caractère. Donc, on sacrifie la lisibilité des flux XML sans vraiment gagner en performance.) Si c'est une communication interne, les services Web ne servent à rien !
+On économise un peu de volume en utilisant JSON, un format simplifié en JavaScript, mais ce n'est pas terrible à présenter devant un client. Alors... « <span style="font-style:italic;">Avec XML on ne me reprochera rien.</span> » Finalement, XML est l'IBM ou l'Oracle des formats d'échange. Personne ne vous reprochera de choisir ces fournisseurs, mêmes s'ils vous on vendu de mauvais produits ou des produits ne correspondant absolument pas à vos besoins. L'effet « <span style="font-style:italic;">parapluie</span> ».
+
+<span style="font-weight:bold;">Format binaire</span>
+Comme de plus, le format est textuel, impossible de l'utiliser pour envoyer des images, des pièces jointes, etc. Pour cela, on utilise une superbe astuce, l'encodage Base64, conçu pour Usenet en 1979 ! Bonjour la nouveauté ! En gros, on augmente de 30% la taille du flux pour chaque fichier binaire. Comme chacun sait, ce sont justement des petits fichiers... C'est pour cela qu'on souhaite les envoyer en binaire... L'absurdité de cette approche est que l'encodage Base64 a été conçu pour du texte en 7bit. Avec un jeu limité de 64 caractères, donc 6 bits utiles par octets. Le fichier XML peut être en Unicode, soit en 16 bit ! Même si on doit payer 2 octets pour chaque caractère XML de la syntaxe classique, on y gagne largement pour les attributs binaires. À quand un encodage binaire to Unicode ? Un Base65530 ?
+Coté serveur, il va falloir décoder tout cela pour générer le flux. On décode en mémoire ? Directement sur disque ? Si le flux final n'est pas trop gros, utiliser le disque dégrade grandement les performances. Si le flux est très gros, le décoder en mémoire consomme trop de ressources et peut faire planter le serveur. Que choisir ? Et le décodage s'effectue en flux ou en DOM ? Si c'est en DOM, j'ai donc le Base64 en mémoire. Une copie complète du flux binaire mais avec un bonus de 30%. Il faut bien entendu prévoir un autre tampon pour la version décodée. Donc, pour une charge utile de 100, j'ai droit à 230 ! Pour des petits fichiers comme chacun sait. Petit, le temps des tests unitaires. C'est ensuite que ça plante. En production, quand cela ne gêne personne.
+Des architectures SOA en production consomment 70% de la CPU et du réseau pour gérer les flux XML. Donc, sur dix machines, sept ne servent à rien d'autre qu'à faire plaisir aux marketeux et aux vendeurs de matériel. HP, Oracle et IBM vous disent merci.
+
+Qui a dit que XML était plus simple ? En tout cas, dans les faits, c'est une approche rigide (chaque document est un tous, sans relation avec son environnement), très fragile (syntaxe généralement non vérifiée, fichiers textes avec une police non conforme), présentant des risques majeurs de sécurité (inclusions de ressources via des URL), dont les bénéfices uniques sont rarement exploités (espaces de noms et syntaxe ouverte), dont la programmation propre est complexe (DOM, SAX, StAX, DTD, XMLSchema), non efficace (signature, parsing, vérification de la syntaxe, binaire), et consommant beaucoup de mémoire et de CPU (pas de commentaires...).
+Enfin, est-ce vraiment pour cela qu'il était prévu ? A-t'on vraiment conscience de ces chausse-trappes ? En un mot : « XML les pinceaux » ! Qui réfléchit plus de deux minutes avant de concevoir une grammaire XML ? Que voulons-nous réellement encoder ? Et pourquoi ? « Je ne sais pas, mais ça marche » répond en cœur l'ingénieur.
+Le problème majeur vient d'une mauvaise compréhension de XML par les développeurs. Ils n'ont jamais reçu de formation sérieuse sur le sujet. Comme cela paraît simple, ils pensent avoir tout compris en cinq minutes. La plupart ignorent ce qu'est une DTD ou un schéma, ignorent XPath ou XSLT et pensent maîtriser XHTML.
+XML est un langage de structuration de l'information DOCUMENTAIRE. Un développeur/ingénieur ne sait fondamentalement pas ce qu'est une donnée, une information, un document et s'en fout ! Comment voulez-vous faire sérieusement du XML si fondamentalement vous n'avez pas compris comment fonctionne l'information encodée, sa structure... ?
+Les développeurs pensent processus en premier, alors qu'avec XML il faut penser donnée en premier.  La donnée a un fonctionnement intrinsèque, il faut le respecter. Si les développeurs pensaient un peu plus en termes d'informations/de données, peut-être utiliseraient-ils moins XML n'importe comment ?
+
+</div><div>« <i>Un bon fichier XML est un fichier qui peut être validé suivant un schéma</i> » Mickael Sperberg-McQueen</div><div>
+En effet, XML n'a aucun sens en tant que syntaxe local de transport de l'information, il a été créé pour gérer l'interopérabilité dans l'encodage d'informations équivalentes ; il permet à plusieurs organisations de partager l'information en s'appuyant sur une syntaxe commune, une grammaire commune (le schéma XML) et un ensemble de standards normalisés indépendants d'un langage ou d'un système d'exploitation. Il a été créé dans le monde de l'édition de textes et est orienté document.
+
+Parce qu'y'en a marre des technologies innovantes utilisées ce pourquoi elles n'ont pas été conçues ! Faites manger de la farine animale à une vache et elle devient folle... donc attention à ce que vous faites consommer à vos programmes ! Quelle que soit la sauce qu'on vous a vendue avec pour lui donner un bon goût de renouveau et de panacée universelle...
+
+<!--?xml version="1.0" encoding="UTF-8"?-->
+&lt;document&gt;
+&lt;prã©nom&gt;Jean-Pierre&lt;/prÃ©nom&gt;
+&lt;nom&gt;troll&lt; nom=""&gt;
+&lt;email&gt;jp.troll@gmail.com&lt;email&gt;
+&lt;/document&gt;</div></div></div>
+</body></html>

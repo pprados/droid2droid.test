@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="install_values">
+    	<item>Normal</item>
+    	<item>Reinstall</item>
+    </string-array>
+    <string-array name="install_codes">
+    	<item>0</item>
+    	<item>2</item>
+    </string-array>
+
+    <string-array name="bind_values">
+    	<item>Normal</item>
+    	<item>Auto create</item>
+    	<item>Debug</item>
+    	<item>Full</item>
+    </string-array>
+    <string-array name="bind_codes">
+    	<item>0</item>
+    	<item>1</item>
+    	<item>2</item>
+    	<item>3</item>
+    </string-array>
+
+    <string-array name="discover_values">
+    	<item>Binded</item>
+    	<item>Accept Anonymous</item>
+    	<item>No bluetooth</item>
+    	<item>No ethernet</item>
+    </string-array>
+    <string-array name="discover_codes">
+    	<item>0</item>
+    	<item>1</item>
+    	<item>2</item>
+    	<item>4</item>
+    </string-array>
+
+    <string-array name="applicationcontext_values">
+    	<item>Normal</item>
+    </string-array>
+    <string-array name="applicationcontext_codes">
+    	<item>0</item>
+    </string-array>
+</resources>

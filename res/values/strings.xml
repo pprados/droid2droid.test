@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RA Test</string>
+    <string name="sub_title">Use remote android API</string>
+    <string name="discover">Discover</string>
+    <string name="connection">Con.</string>
+    <string name="install">Install</string>
+    <string name="bind">Bind</string>
+    <string name="invoke">Invoke</string>
+    <string name="clear">Clear</string>
+    <string name="burst">Burst</string>
+    <string name="config">Config</string>
+    
+    
+    <string name="action_label_nav">Nav</string>
+    <string name="action_label_nav_tabs">Tabs</string>
+    <string name="action_label_nav_drop_down">List</string>
+    <string name="action_label_nav_label">Label</string>
+    
+</resources>
