@@ -11,6 +11,7 @@ import org.remoteandroid.RemoteAndroidInfo;
 import org.remoteandroid.RemoteAndroidManager;
 import org.remoteandroid.test.RemoteAndroidContext.OnRemoteAndroidContextUpdated;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -48,7 +49,8 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	private static final String URL_NOT_KNOWN="Not known";
 	private static final String EXTRA_BURST="burst";
 
-
+	private static final int REQUEST_CONNECT_CODE=1;
+	
     private ExecutorService mExecutors=Executors.newCachedThreadPool();
 	private Handler mHandler=new Handler();
 	SharedPreferences mPreferences;
@@ -102,15 +104,20 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		}
 	}
 	@Override
-	public void onDiscover(RemoteAndroidInfo remoteAndroidInfo,boolean replace)
+	public void onDiscover(RemoteAndroidInfo info,boolean replace)
 	{
-		String[] uris=remoteAndroidInfo.getUris();
+		String[] uris=info.getUris();
 		mRetain.mItemAdapter.remove(URL_NOT_KNOWN);
     	for (String s:uris)
     	{
-    		final String key='['+remoteAndroidInfo.getName()+"] "+s;
+    		final String key='['+info.getName()+"] "+s;
     		mRetain.mItemAdapter.remove(key);
     		mRetain.mItemAdapter.add(key);
+    	}
+    	if (!mRetain.mDiscoveredAndroid.contains(info))
+    	{
+    		mRetain.mDiscoveredAndroid.add(info);
+    		replace=false;
     	}
 		if (!replace)
 		{
@@ -119,7 +126,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				mRetain.mRemoteAndroids.add(new RemoteAndroidContext(this));
 		    	int position=mRetain.mRemoteAndroids.size()-1;
 		    	RemoteAndroidContext racontext=mRetain.mRemoteAndroids.get(position);
-		    	racontext.mUri='['+remoteAndroidInfo.getName()+"] "+uris[0];
+		    	racontext.mUri='['+info.getName()+"] "+uris[0];
 			}
 			else
 			{
@@ -369,6 +376,10 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				mRetain.mDiscoveredAndroid.cancel();
 			}
 		}
+		else if (id == R.id.add)
+		{
+			startActivityForResult(new Intent(RemoteAndroidManager.ACTION_CONNECT_ANDROID), REQUEST_CONNECT_CODE);
+		}
 		else if (id == R.id.clear)
 		{
 			if (mRetain.mDiscoveredAndroid!=null)
@@ -390,6 +401,16 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if (requestCode==REQUEST_CONNECT_CODE && resultCode==Activity.RESULT_OK)
+		{
+			
+			RemoteAndroidInfo info=(RemoteAndroidInfo)data.getParcelableExtra(RemoteAndroidManager.EXTRA_DISCOVER);
+			onDiscover(info, false);
+		}
+	}
 	@Override
 	public void onClick(final View view)
 	{

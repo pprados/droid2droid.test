@@ -3,6 +3,7 @@
     <string name="app_name">RA Test</string>
     <string name="sub_title">Use remote android API</string>
     <string name="discover">Discover</string>
+    <string name="add">Add</string>
     <string name="connection">Con.</string>
     <string name="install">Install</string>
     <string name="bind">Bind</string>

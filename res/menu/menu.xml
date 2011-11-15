@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:id="@+id/add"
+          android:title="@string/add"
+    	  android:icon="@android:drawable/ic_menu_add"
+          android:visible="true"
+          android:showAsAction="ifRoom|withText" />
+           />
     <item android:id="@+id/discover"
     	  android:icon="@android:drawable/ic_menu_search"
           android:title="@string/discover"
@@ -20,11 +27,11 @@
           android:checkable="true" 
           android:checked="false"
           android:visible="true"
-          android:showAsAction="ifRoom|withText" />
+          android:showAsAction="withText" />
            />
     <item android:id="@+id/config"
           android:title="@string/config"
     	  android:icon="@android:drawable/ic_menu_manage"
           android:visible="true"
-          android:showAsAction="ifRoom"/>           
+          android:showAsAction="withText"/>           
 </menu>
