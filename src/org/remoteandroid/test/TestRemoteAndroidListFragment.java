@@ -57,7 +57,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	MenuItem mDiscover;
 	MenuItem mBurst;
 	
-
+	boolean mIsDiscover;
 
 	private List<String> mItems=new ArrayList<String>();
 
@@ -105,6 +105,12 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	}
 	@Override
 	public void onDiscover(RemoteAndroidInfo info,boolean replace)
+	{
+		if (!mIsDiscover && !replace) return;
+		addRemoteAndroid(info, replace);
+	}
+
+	private void addRemoteAndroid(RemoteAndroidInfo info, boolean replace)
 	{
 		String[] uris=info.getUris();
 		mRetain.mItemAdapter.remove(URL_NOT_KNOWN);
@@ -370,10 +376,12 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				SharedPreferences preferences=mPreferences;
 				int flags=Integer.parseInt(preferences.getString("discover.mode","1"));
 				mRetain.mDiscoveredAndroid.start(flags,RemoteAndroidManager.DISCOVER_INFINITELY);
+				mIsDiscover=true;
 			}
 			else
 			{
 				mRetain.mDiscoveredAndroid.cancel();
+				mIsDiscover=false;
 			}
 		}
 		else if (id == R.id.add)
@@ -408,7 +416,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		{
 			
 			RemoteAndroidInfo info=(RemoteAndroidInfo)data.getParcelableExtra(RemoteAndroidManager.EXTRA_DISCOVER);
-			onDiscover(info, false);
+			addRemoteAndroid(info, false);
 		}
 	}
 	@Override

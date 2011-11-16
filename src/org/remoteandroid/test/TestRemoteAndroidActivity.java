@@ -87,8 +87,7 @@ public class TestRemoteAndroidActivity extends FragmentActivity
 			if (display.getOrientation()==Surface.ROTATION_0)
 				menu=false;
 		}		
-		if (!menu)
-			getSupportActionBar().setDisplayOptions(0,ActionBar.DISPLAY_SHOW_HOME);
+		getSupportActionBar().setDisplayOptions(0,ActionBar.DISPLAY_SHOW_HOME);
 
 		// Strict mode
 		Intent market = RemoteAndroidManager.getIntentForMarket(this);
