@@ -1,10 +1,18 @@
 package org.remoteandroid.test;
 
+import java.io.IOException;
+import java.util.Set;
+import java.util.UUID;
+
 import org.remoteandroid.RemoteAndroidManager;
+import org.remoteandroid.internal.socket.bluetooth.BluetoothSocketBossSender;
 
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -56,6 +64,34 @@ public class TestRemoteAndroidActivity extends FragmentActivity
 	{
 		super.onCreate(savedInstanceState);
 
+// FIXME		
+//		new AsyncTask<Void, Void, Void>()
+//		{
+//			private Set<BluetoothDevice> devices;
+//			protected void onPreExecute() 
+//			{
+//				BluetoothAdapter adapter=BluetoothAdapter.getDefaultAdapter();
+//				devices=adapter.getBondedDevices();
+//				
+//			}
+//			protected Void doInBackground(Void[] params) 
+//			{
+//				try
+//				{
+//					BluetoothDevice dev=devices.iterator().next();
+//					UUID uuid=uuid=BluetoothSocketBossSender.sKeys[0];
+//					BluetoothSocket socket=dev.createRfcommSocketToServiceRecord(uuid);
+//					socket.connect();
+//					Log.d("TEST","BT ok");
+//					socket.close();
+//				}
+//				catch (IOException e)
+//				{
+//					e.printStackTrace();
+//				}
+//				return null;
+//			}
+//		}.execute();
 		requestWindowFeature(Window.FEATURE_ACTION_BAR);
         requestWindowFeature(Window.FEATURE_CONTEXT_MENU);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
