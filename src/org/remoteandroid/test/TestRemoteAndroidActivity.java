@@ -82,7 +82,6 @@ public class TestRemoteAndroidActivity extends FragmentActivity
 //					UUID uuid=uuid=BluetoothSocketBossSender.sKeys[0];
 //					BluetoothSocket socket=dev.createRfcommSocketToServiceRecord(uuid);
 //					socket.connect();
-//					Log.d("TEST","BT ok");
 //					socket.close();
 //				}
 //				catch (IOException e)
