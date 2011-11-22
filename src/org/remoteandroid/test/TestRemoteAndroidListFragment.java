@@ -393,6 +393,10 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 			if (mRetain.mDiscoveredAndroid!=null)
 			{
 				mRetain.mDiscoveredAndroid.clear();
+				for (RemoteAndroidContext rac:mRetain.mRemoteAndroids)
+				{
+					if (rac.mRemoteAndroid!=null) rac.mRemoteAndroid.close();
+				}
 				mRetain.mRemoteAndroids.clear();
 		    	initAndroids();
 				mRetain.mAdapter.notifyDataSetChanged();
