@@ -120,6 +120,12 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     		mRetain.mItemAdapter.remove(key);
     		mRetain.mItemAdapter.add(key);
     	}
+if (mRetain==null)
+	Log.d("DEBUG","mRetain=null");
+if (mRetain.mDiscoveredAndroid==null)
+	Log.d("DEBUG","mDiscoveredAndroid=null");
+if (info==null)
+	Log.d("DEBUG","info=null");
     	if (!mRetain.mDiscoveredAndroid.contains(info))
     	{
     		mRetain.mDiscoveredAndroid.add(info);

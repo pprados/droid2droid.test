@@ -1,34 +1,21 @@
 package org.remoteandroid.test;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.UUID;
-
 import org.remoteandroid.RemoteAndroidManager;
-import org.remoteandroid.internal.socket.bluetooth.BluetoothSocketBossSender;
-
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
 import android.support.v4.view.Window;
-import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
-import android.view.View;
 import android.view.WindowManager;
 
 // TODO: Approche Action bar dans le context menu
