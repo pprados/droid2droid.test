@@ -1,5 +1,6 @@
 package org.remoteandroid.test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -71,12 +72,23 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		private BaseAdapter mAdapter;
 		private ArrayAdapter<String> mItemAdapter;
 		private boolean mBurst;
+		private RemoteAndroidManager mManager;
 	}
 	
 	@Override
 	public void onDestroy()
 	{
 		super.onDestroy();
+		try
+		{
+			mRetain.mDiscoveredAndroid.close();
+			mRetain.mManager.close();
+		}
+		catch (IOException e)
+		{
+			// Ignore
+			Log.e(TAG,e.getMessage());
+		}
 	}
 	
 //	@Override
@@ -199,12 +211,11 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
         Intent market=RemoteAndroidManager.getIntentForMarket(getActivity());
         if (market==null)
         {
-        	final RemoteAndroidManager manager=RemoteAndroidManager.getManager(getActivity());
-	        //mRetain=(Retain)getActivity().getLastNonConfigurationInstance(); // FIXME: single fragment in activity
-        	mRetain=null;
+	        mRetain=(Retain)getActivity().getLastNonConfigurationInstance(); // FIXME: single fragment in activity
 	        if (mRetain==null)
 	        {
 	        	mRetain=new Retain();
+	        	mRetain.mManager=RemoteAndroidManager.getManager(getActivity());
 	        	if (savedInstanceState!=null)
 	        	{
 	        		mRetain.mBurst=savedInstanceState.getBoolean(EXTRA_BURST);
@@ -304,22 +315,22 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	        		@Override
 	        		protected ListRemoteAndroidInfo doInBackground(Void... paramArrayOfParams)
 	        		{
-	    	        	manager.setLog(RemoteAndroidManager.FLAG_LOG_ALL, true);
-	    	        	ListRemoteAndroidInfo rc=manager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
+	    	        	//manager.setLog(RemoteAndroidManager.FLAG_LOG_ALL, true);
+	    	        	ListRemoteAndroidInfo rc=mRetain.mManager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
 	    	        	mRetain.mDiscoveredAndroid=rc;
 	    	        	return rc;
 	        		}
 	        		protected void onPostExecute(ListRemoteAndroidInfo result) 
 	        		{
-	    	        	setDiscover(manager.isDiscovering());
+	    	        	setDiscover(mRetain.mManager.isDiscovering());
 	    	        	setBurst(mRetain.mBurst);
 	        		}
 	        	}.execute();
 	        }
 	        else
 	        {
-				mRetain.mDiscoveredAndroid=manager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
-	        	setDiscover(manager.isDiscovering());
+				mRetain.mDiscoveredAndroid=mRetain.mManager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
+	        	setDiscover(mRetain.mManager.isDiscovering());
 	        	setBurst(mRetain.mBurst);
 	        }
         }
@@ -329,8 +340,6 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     public void onResume()
     {
     	super.onResume();
-    	Log.d("XXXX","onResume");
-    	
        	initAndroids();
     }
 
