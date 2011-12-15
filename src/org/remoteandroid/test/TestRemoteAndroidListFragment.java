@@ -66,7 +66,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	
 	static class Retain
 	{
-		private ListRemoteAndroidInfo mDiscoveredAndroid;
+		private volatile ListRemoteAndroidInfo mDiscoveredAndroid;
 		private ArrayList<RemoteAndroidContext> mRemoteAndroids=new ArrayList<RemoteAndroidContext>(5);
 		private BaseAdapter mAdapter;
 		private ArrayAdapter<String> mItemAdapter;
@@ -120,12 +120,10 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     		mRetain.mItemAdapter.remove(key);
     		mRetain.mItemAdapter.add(key);
     	}
-if (mRetain==null)
-	Log.d("DEBUG","mRetain=null");
-if (mRetain.mDiscoveredAndroid==null)
-	Log.d("DEBUG","mDiscoveredAndroid=null");
-if (info==null)
-	Log.d("DEBUG","info=null");
+    	while (mRetain.mDiscoveredAndroid==null)
+    	{
+    		try { Thread.sleep(500); } catch (Exception e) {}
+    	}
     	if (!mRetain.mDiscoveredAndroid.contains(info))
     	{
     		mRetain.mDiscoveredAndroid.add(info);
@@ -198,7 +196,6 @@ if (info==null)
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-
         Intent market=RemoteAndroidManager.getIntentForMarket(getActivity());
         if (market==null)
         {
@@ -300,21 +297,31 @@ if (info==null)
 	        }
 	        setListAdapter(mRetain.mAdapter);
 	        setHasOptionsMenu(true);
-        	new AsyncTask<Void, Void, ListRemoteAndroidInfo>()
-        	{
-        		@Override
-        		protected ListRemoteAndroidInfo doInBackground(Void... paramArrayOfParams)
-        		{
-    	        	manager.setLog(RemoteAndroidManager.FLAG_LOG_ALL, true);
-        			return manager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
-        		}
-        		protected void onPostExecute(ListRemoteAndroidInfo result) 
-        		{
-        			mRetain.mDiscoveredAndroid=result;
-    	        	setDiscover(manager.isDiscovering());
-    	        	setBurst(mRetain.mBurst);
-        		}
-        	}.execute();
+	        if (true) // FIXME Bug au retour en cas de crash de l'applie lors d'un connect sur RA.
+	        {
+	        	new AsyncTask<Void, Void, ListRemoteAndroidInfo>()
+	        	{
+	        		@Override
+	        		protected ListRemoteAndroidInfo doInBackground(Void... paramArrayOfParams)
+	        		{
+	    	        	manager.setLog(RemoteAndroidManager.FLAG_LOG_ALL, true);
+	    	        	ListRemoteAndroidInfo rc=manager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
+	    	        	mRetain.mDiscoveredAndroid=rc;
+	    	        	return rc;
+	        		}
+	        		protected void onPostExecute(ListRemoteAndroidInfo result) 
+	        		{
+	    	        	setDiscover(manager.isDiscovering());
+	    	        	setBurst(mRetain.mBurst);
+	        		}
+	        	}.execute();
+	        }
+	        else
+	        {
+				mRetain.mDiscoveredAndroid=manager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
+	        	setDiscover(manager.isDiscovering());
+	        	setBurst(mRetain.mBurst);
+	        }
         }
     }
 	
@@ -322,6 +329,7 @@ if (info==null)
     public void onResume()
     {
     	super.onResume();
+    	Log.d("XXXX","onResume");
     	
        	initAndroids();
     }
