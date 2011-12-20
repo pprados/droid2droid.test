@@ -79,16 +79,8 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	public void onDestroy()
 	{
 		super.onDestroy();
-		try
-		{
-			mRetain.mDiscoveredAndroid.close();
-			mRetain.mManager.close();
-		}
-		catch (IOException e)
-		{
-			// Ignore
-			Log.e(TAG,e.getMessage());
-		}
+		mRetain.mDiscoveredAndroid.close();
+		mRetain.mManager.close();
 	}
 	
 //	@Override
