@@ -6,6 +6,7 @@
       android:installLocation="auto"
 >
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="11"/>
+    <!-- TODO: Sherlock theme and Holo theme -->
     <application 
     	android:icon="@drawable/icon" 
     	android:logo="@drawable/icon"

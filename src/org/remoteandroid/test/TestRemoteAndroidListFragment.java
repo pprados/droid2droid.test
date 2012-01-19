@@ -200,6 +200,8 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
+mItems.add("[hard] ip://192.168.1.107"); // FIXME: a virer        
+mItems.add("[hard] ip://192.168.0.70"); // FIXME: a virer        
         Intent market=RemoteAndroidManager.getIntentForMarket(getActivity());
         if (market==null)
         {
@@ -442,7 +444,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	public void onClick(final View view)
 	{
 		final int position=(Integer)view.getTag();
-		RemoteAndroidContext context=mRetain.mRemoteAndroids.get(position);
+		final RemoteAndroidContext context=mRetain.mRemoteAndroids.get(position);
 		switch (view.getId())
 		{
 			case R.id.active:
@@ -467,10 +469,18 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				}
 				else
 				{
-					if (!((ToggleButton)view).isChecked())
-						context.disconnect(getActivity());
-					else
-						context.connect(getActivity());
+					new AsyncTask<Void, Void, Void>()
+					{
+						@Override
+						protected Void doInBackground(Void... params)
+						{
+							if (!((ToggleButton)view).isChecked())
+								context.disconnect(getActivity());
+							else
+								context.connect(getActivity());
+							return null;
+						}
+					}.execute();
 				}
 				break;
 				

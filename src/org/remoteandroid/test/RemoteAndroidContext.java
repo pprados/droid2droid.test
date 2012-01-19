@@ -61,8 +61,9 @@ public class RemoteAndroidContext
 		}
 		String uri=mUri.substring(mUri.indexOf("] ")+2);
 		mState=State.BindingRemoteAndroid;
+		Intent intent=new Intent(Intent.ACTION_MAIN,Uri.parse(uri));
 		RemoteAndroidManager.getManager(context).bindRemoteAndroid(
-				new Intent(Intent.ACTION_MAIN,Uri.parse(uri)), 
+				intent, 
 				new ServiceConnection()
 				{
 
