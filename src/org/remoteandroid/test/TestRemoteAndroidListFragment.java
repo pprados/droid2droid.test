@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import org.remoteandroid.ListRemoteAndroidInfo;
 import org.remoteandroid.RemoteAndroidInfo;
 import org.remoteandroid.RemoteAndroidManager;
+import org.remoteandroid.RemoteAndroidManager.ManagerListener;
 import org.remoteandroid.test.RemoteAndroidContext.OnRemoteAndroidContextUpdated;
 
 import android.app.Activity;
@@ -124,10 +125,10 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     		mRetain.mItemAdapter.remove(key);
     		mRetain.mItemAdapter.add(key);
     	}
-    	while (mRetain.mDiscoveredAndroid==null)
-    	{
-    		try { Thread.sleep(500); } catch (Exception e) {}
-    	}
+//    	while (mRetain.mDiscoveredAndroid==null)
+//    	{
+//    		try { Thread.sleep(500); } catch (Exception e) {}
+//    	}
     	if (!mRetain.mDiscoveredAndroid.contains(info))
     	{
     		mRetain.mDiscoveredAndroid.add(info);
@@ -137,7 +138,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		{
 			if (uris.length!=0)
 			{
-				mRetain.mRemoteAndroids.add(new RemoteAndroidContext(this));
+				mRetain.mRemoteAndroids.add(new RemoteAndroidContext(getActivity(),mRetain.mManager,this));
 		    	int position=mRetain.mRemoteAndroids.size()-1;
 		    	RemoteAndroidContext racontext=mRetain.mRemoteAndroids.get(position);
 		    	racontext.mUri='['+info.getName()+"] "+uris[0];
@@ -209,7 +210,26 @@ mItems.add("[hard] ip://192.168.0.70"); // FIXME: a virer
 	        if (mRetain==null)
 	        {
 	        	mRetain=new Retain();
-	        	mRetain.mManager=RemoteAndroidManager.getManager(getActivity());
+	        	RemoteAndroidManager.bindManager(getActivity(), new ManagerListener()
+	        	{
+
+					@Override
+					public void bind(RemoteAndroidManager manager)
+					{
+						mRetain.mManager=manager;
+						mRetain.mDiscoveredAndroid=mRetain.mManager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
+					}
+
+					@Override
+					public void unbind(RemoteAndroidManager manager)
+					{
+						mRetain.mManager=null;
+						mRetain.mDiscoveredAndroid=null;
+	    	        	setDiscover(mRetain.mManager.isDiscovering());
+	    	        	setBurst(mRetain.mBurst);
+					}
+	        		
+	        	});
 	        	if (savedInstanceState!=null)
 	        	{
 	        		mRetain.mBurst=savedInstanceState.getBoolean(EXTRA_BURST);
@@ -302,31 +322,6 @@ mItems.add("[hard] ip://192.168.0.70"); // FIXME: a virer
 	        }
 	        setListAdapter(mRetain.mAdapter);
 	        setHasOptionsMenu(true);
-	        if (true) // FIXME Bug au retour en cas de crash de l'applie lors d'un connect sur RA.
-	        {
-	        	new AsyncTask<Void, Void, ListRemoteAndroidInfo>()
-	        	{
-	        		@Override
-	        		protected ListRemoteAndroidInfo doInBackground(Void... paramArrayOfParams)
-	        		{
-	    	        	//manager.setLog(RemoteAndroidManager.FLAG_LOG_ALL, true);
-	    	        	ListRemoteAndroidInfo rc=mRetain.mManager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
-	    	        	mRetain.mDiscoveredAndroid=rc;
-	    	        	return rc;
-	        		}
-	        		protected void onPostExecute(ListRemoteAndroidInfo result) 
-	        		{
-	    	        	setDiscover(mRetain.mManager.isDiscovering());
-	    	        	setBurst(mRetain.mBurst);
-	        		}
-	        	}.execute();
-	        }
-	        else
-	        {
-				mRetain.mDiscoveredAndroid=mRetain.mManager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
-	        	setDiscover(mRetain.mManager.isDiscovering());
-	        	setBurst(mRetain.mBurst);
-	        }
         }
     }
 	
@@ -357,7 +352,7 @@ mItems.add("[hard] ip://192.168.0.70"); // FIXME: a virer
     				{
     					for (int i=mRetain.mRemoteAndroids.size();i<size;++i)
     					{
-    						RemoteAndroidContext context=new RemoteAndroidContext(TestRemoteAndroidListFragment.this);
+    						RemoteAndroidContext context=new RemoteAndroidContext(getActivity(),mRetain.mManager,TestRemoteAndroidListFragment.this);
     						context.mUri=(mItems.size()>0) ? mItems.get(0) : URL_NOT_KNOWN;
     						mRetain.mRemoteAndroids.add(context);
     					}

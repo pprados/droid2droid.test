@@ -28,21 +28,23 @@ public class RemoteAndroidContext
 		void onUpdated();
 	}
 	
-	Handler sHandler=new Handler();
+	Handler mHandler=new Handler();
 	
 	OnRemoteAndroidContextUpdated mCallback;
 	String mUri;
 	enum State { Idle,BindingRemoteAndroid,InstallingApk,BindingRemoteObject,BindApplicationContext};
 	State mState=State.Idle;
 	
+	RemoteAndroidManager mManager;
 	RemoteAndroid mRemoteAndroid;
 	TestRemoteObject mRemoteObject;
 	
 	CharSequence mStatus="idle";
 	
-	public RemoteAndroidContext(OnRemoteAndroidContextUpdated callback)
+	public RemoteAndroidContext(Context context,RemoteAndroidManager manager,OnRemoteAndroidContextUpdated callback)
 	{
 		mCallback=callback;
+		mManager=manager;
 	}
 	
 	private void setStatus(String status)
@@ -55,14 +57,14 @@ public class RemoteAndroidContext
 	public void connect(final Activity context)
 	{
 		setStatus("Connecting...");
-		if (mRemoteAndroid!=null)
+		if (mManager==null || mRemoteAndroid!=null)
 		{
 			return;
 		}
 		String uri=mUri.substring(mUri.indexOf("] ")+2);
 		mState=State.BindingRemoteAndroid;
 		Intent intent=new Intent(Intent.ACTION_MAIN,Uri.parse(uri));
-		RemoteAndroidManager.getManager(context).bindRemoteAndroid(
+		mManager.bindRemoteAndroid(
 				intent, 
 				new ServiceConnection()
 				{
@@ -225,5 +227,5 @@ public class RemoteAndroidContext
 		}.execute();
 		
 	}
-	
+
 }
