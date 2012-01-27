@@ -76,14 +76,6 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		private RemoteAndroidManager mManager;
 	}
 	
-	@Override
-	public void onDestroy()
-	{
-		super.onDestroy();
-		mRetain.mDiscoveredAndroid.close();
-		mRetain.mManager.close();
-	}
-	
 //	@Override
 	public Object onRetainNonConfigurationInstance()
 	{
@@ -129,6 +121,10 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 //    	{
 //    		try { Thread.sleep(500); } catch (Exception e) {}
 //    	}
+    	if (mRetain==null)
+    		Log.d("ERROR","mRetina=null");
+    	if (mRetain.mDiscoveredAndroid==null)
+    		Log.d("ERROR","mRetina.mDiscoveredAndroid=null");
     	if (!mRetain.mDiscoveredAndroid.contains(info))
     	{
     		mRetain.mDiscoveredAndroid.add(info);
@@ -195,18 +191,19 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	public void onSaveInstanceState(Bundle outState)
 	{
 		super.onSaveInstanceState(outState);
-		outState.putBoolean(EXTRA_BURST, mRetain.mBurst);
+		if (mRetain!=null)
+			outState.putBoolean(EXTRA_BURST, mRetain.mBurst);
 	}
 	@Override
     public void onCreate(Bundle savedInstanceState) 
     {
+		Log.v(TAG,"Fragment.onCreate");
         super.onCreate(savedInstanceState);
-mItems.add("[hard] ip://192.168.1.107"); // FIXME: a virer        
-mItems.add("[hard] ip://192.168.0.70"); // FIXME: a virer        
+        //mItems.add("[hardcoded] ip://192.168.1.107"); // FIXME: a virer        
         Intent market=RemoteAndroidManager.getIntentForMarket(getActivity());
         if (market==null)
         {
-	        mRetain=(Retain)getActivity().getLastNonConfigurationInstance(); // FIXME: single fragment in activity
+//	        mRetain=(Retain)getActivity().getLastNonConfigurationInstance(); // FIXME: single fragment in activity
 	        if (mRetain==null)
 	        {
 	        	mRetain=new Retain();
@@ -223,10 +220,10 @@ mItems.add("[hard] ip://192.168.0.70"); // FIXME: a virer
 					@Override
 					public void unbind(RemoteAndroidManager manager)
 					{
-						mRetain.mManager=null;
 						mRetain.mDiscoveredAndroid=null;
-	    	        	setDiscover(mRetain.mManager.isDiscovering());
+	    	        	setDiscover(false);
 	    	        	setBurst(mRetain.mBurst);
+						mRetain.mManager=null;
 					}
 	        		
 	        	});
@@ -328,10 +325,26 @@ mItems.add("[hard] ip://192.168.0.70"); // FIXME: a virer
     @Override
     public void onResume()
     {
+		Log.v(TAG,"Fragment.onResume");
     	super.onResume();
        	initAndroids();
     }
 
+    @Override
+    public void onPause()
+    {
+		Log.v(TAG,"Fragment.onPause");
+    	super.onPause();
+    }
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		Log.v(TAG,"Fragment.onDestroy");
+		mRetain.mDiscoveredAndroid.close();
+		mRetain.mManager.close();
+	}
+	
 	private void initAndroids()
 	{
 		new AsyncTask<Void, Void, SharedPreferences>()

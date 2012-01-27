@@ -167,8 +167,14 @@ public class RemoteAndroidContext
 		mState=State.BindingRemoteObject;
 		SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(context.getBaseContext());
 		int flags=Integer.parseInt(preferences.getString("bind.flags","1"));
+		Intent intent=new Intent("org.remoteandroid.test.TestService");
+		intent.putExtra("boolean", true);
+		intent.putExtra("int", 1);
+		intent.putExtra("long", 1L);
+		intent.putExtra("float", (float)1.0);
+		intent.putExtra("double", 1.0);
 		boolean rc=mRemoteAndroid.bindService(
-				new Intent("org.remoteandroid.test.TestService"), //Intent to invoke service
+				intent,
 				new ServiceConnection()
 				{
 					
