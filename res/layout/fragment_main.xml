@@ -8,14 +8,27 @@
 	android:paddingLeft="8dp"
 	android:paddingRight="8dp"
 >
-
-	<fragment
-		android:id="@+id/fragment"
-		android:name="org.remoteandroid.test.TestRemoteAndroidListFragment"
+	<RelativeLayout
+		android:id="@+id/relativeLayout1"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 	>
+	<fragment
+	    android:id="@+id/fragment"
+	    android:name="org.remoteandroid.test.TestRemoteAndroidListFragment"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" >
+
 		<!-- Preview: layout=@layout/main -->
 	</fragment>
 
+	<ImageView
+	    android:id="@+id/qrcode"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:layout_alignParentRight="true"
+	    android:src="@drawable/icon" />
+
+	</RelativeLayout>
 </LinearLayout>

@@ -1,5 +1,8 @@
 package org.remoteandroid.test;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.remoteandroid.RemoteAndroidManager;
 
 import android.app.AlertDialog;
@@ -8,6 +11,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
@@ -16,7 +22,9 @@ import android.support.v4.view.Menu;
 import android.support.v4.view.Window;
 import android.view.Display;
 import android.view.Surface;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 // TODO: Approche Action bar dans le context menu
 // TODO: Ou approche action bar en simulation complète
@@ -34,6 +42,9 @@ public class TestRemoteAndroidActivity extends FragmentActivity
 	FragmentManager					mFragmentManager;
 
 	TestRemoteAndroidListFragment	mFragment;
+	
+	ImageView						mQrCode;
+	boolean							mQrCodeBig;
 
 	@Override
 	public void onBackPressed()
@@ -85,7 +96,55 @@ public class TestRemoteAndroidActivity extends FragmentActivity
 		setProgressBarIndeterminateVisibility(Boolean.FALSE); // Important: Use Boolean value !
 		final ActionBar ab = getSupportActionBar();
 		ab.setSubtitle(R.string.sub_title);
-
+		mQrCode=(ImageView)findViewById(R.id.qrcode);
+		
+		if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB) // FIXME
+		{
+			
+			mQrCode.setOnClickListener(new ImageView.OnClickListener()
+			{
+				
+				@Override
+				public void onClick(View v)
+				{
+					if (mQrCodeBig)
+					{
+						mQrCode.setScaleX(0.3f);
+						mQrCode.setScaleY(0.3f);
+						mQrCodeBig=false;
+						mQrCode.invalidate();
+					}
+					else
+					{
+						mQrCode.setScaleX(1.0f);
+						mQrCode.setScaleY(1.0f);
+						mQrCode.invalidate();
+						mQrCodeBig=true;
+					}
+				}
+			});
+			try
+			{
+				InputStream in=getContentResolver()
+						.openTypedAssetFileDescriptor(RemoteAndroidManager.QRCODE_URI, "image/png", null)
+						.createInputStream();
+				Bitmap bitmap=BitmapFactory.decodeStream(in);
+				in.close();
+				Bitmap scaBitmap=Bitmap.createScaledBitmap(bitmap, 300, 300, false);
+				bitmap.recycle();
+				mQrCode.setImageBitmap(scaBitmap);
+				mQrCode.setScaleX(0.3f);
+				mQrCode.setScaleY(0.3f);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			mQrCode.setVisibility(View.GONE);
+		}
 		mFragmentManager = getSupportFragmentManager();
 		mFragment = (TestRemoteAndroidListFragment) mFragmentManager
 				.findFragmentById(R.id.fragment);

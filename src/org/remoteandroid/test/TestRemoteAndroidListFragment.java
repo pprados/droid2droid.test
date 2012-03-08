@@ -103,7 +103,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	@Override
 	public void onDiscover(RemoteAndroidInfo info,boolean replace)
 	{
-		if (!mIsDiscover && !replace) return;
+//		if (!mIsDiscover && !replace) return;
 		addRemoteAndroid(info, replace);
 	}
 
