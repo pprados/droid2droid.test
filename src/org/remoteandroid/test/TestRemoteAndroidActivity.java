@@ -3,17 +3,21 @@ package org.remoteandroid.test;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.http.entity.ContentProducer;
 import org.remoteandroid.RemoteAndroidManager;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentProvider;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
@@ -98,52 +102,52 @@ public class TestRemoteAndroidActivity extends FragmentActivity
 		ab.setSubtitle(R.string.sub_title);
 		mQrCode=(ImageView)findViewById(R.id.qrcode);
 		
-		if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB) // FIXME
+		mQrCode.setOnClickListener(new ImageView.OnClickListener()
 		{
 			
-			mQrCode.setOnClickListener(new ImageView.OnClickListener()
+			@Override
+			public void onClick(View v)
 			{
-				
-				@Override
-				public void onClick(View v)
+				if (mQrCodeBig)
 				{
-					if (mQrCodeBig)
-					{
-						mQrCode.setScaleX(0.3f);
-						mQrCode.setScaleY(0.3f);
-						mQrCodeBig=false;
-						mQrCode.invalidate();
-					}
-					else
-					{
-						mQrCode.setScaleX(1.0f);
-						mQrCode.setScaleY(1.0f);
-						mQrCode.invalidate();
-						mQrCodeBig=true;
-					}
+					mQrCode.getImageMatrix().setScale(0.3f, 0.3f);		
+					mQrCodeBig=false;
+					mQrCode.invalidate();
 				}
-			});
-			try
+				else
+				{
+					mQrCode.getImageMatrix().setScale(1f, 1f);		
+					mQrCode.invalidate();
+					mQrCodeBig=true;
+				}
+			}
+		});
+		mQrCode.setClickable(true); 
+		try
+		{
+			Bitmap bitmap;
+			InputStream in;
+			if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)
 			{
-				InputStream in=getContentResolver()
+				in=getContentResolver()
 						.openTypedAssetFileDescriptor(RemoteAndroidManager.QRCODE_URI, "image/png", null)
 						.createInputStream();
-				Bitmap bitmap=BitmapFactory.decodeStream(in);
-				in.close();
-				Bitmap scaBitmap=Bitmap.createScaledBitmap(bitmap, 300, 300, false);
-				bitmap.recycle();
-				mQrCode.setImageBitmap(scaBitmap);
-				mQrCode.setScaleX(0.3f);
-				mQrCode.setScaleY(0.3f);
 			}
-			catch (IOException e)
+			else
 			{
-				e.printStackTrace();
+				in=getContentResolver().openInputStream(RemoteAndroidManager.QRCODE_URI);
 			}
+			bitmap=BitmapFactory.decodeStream(in);
+			in.close();
+			Bitmap scaBitmap=Bitmap.createScaledBitmap(bitmap, 300, 300, false);
+			bitmap.recycle();
+			mQrCode.setImageBitmap(scaBitmap);
+			mQrCode.getImageMatrix().setScale(0.3f, 0.3f);
+			mQrCode.invalidate();
 		}
-		else
+		catch (IOException e)
 		{
-			mQrCode.setVisibility(View.GONE);
+			e.printStackTrace();
 		}
 		mFragmentManager = getSupportFragmentManager();
 		mFragment = (TestRemoteAndroidListFragment) mFragmentManager
