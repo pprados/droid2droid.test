@@ -1,6 +1,5 @@
 package org.remoteandroid.test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -21,9 +20,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.ListFragment;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,8 +35,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.MenuItem;
+
 // Checkbox pour la découverte des ProximityNetwork
-public class TestRemoteAndroidListFragment extends ListFragment 
+public class TestRemoteAndroidListFragment extends SherlockListFragment 
 implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextUpdated, OnCheckedChangeListener,
 	ListRemoteAndroidInfo.DiscoverListener
 {
@@ -199,7 +198,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     {
 		Log.v(TAG,"Fragment.onCreate");
         super.onCreate(savedInstanceState);
-        //mItems.add("[hardcoded] ip://192.168.1.107"); // FIXME: a virer        
+mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer        
         Intent market=RemoteAndroidManager.getIntentForMarket(getActivity());
         if (market==null)
         {
@@ -377,15 +376,16 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     	}.execute();
 	}
 
-	@Override
-	public void onCreateOptionsMenu(Menu menu, android.view.MenuInflater inflater)
-	{
-		inflater.inflate(R.menu.menu, menu);
-		mDiscover=menu.findItem(R.id.discover);
-		mBurst=menu.findItem(R.id.burst);
-		getActivity().setProgressBarIndeterminateVisibility(Boolean.TRUE);
-		super.onCreateOptionsMenu(menu, inflater);
-	}
+	// FIXME: Sherlock
+//	@Override
+//	public void onCreateOptionsMenu(Menu menu, android.view.MenuInflater inflater)
+//	{
+//		inflater.inflate(R.menu.menu, menu);
+//		mDiscover=menu.findItem(R.id.discover);
+//		mBurst=menu.findItem(R.id.burst);
+//		getActivity().setProgressBarIndeterminateVisibility(Boolean.TRUE);
+//		super.onCreateOptionsMenu(menu, inflater);
+//	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)

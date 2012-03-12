@@ -3,39 +3,37 @@ package org.remoteandroid.test;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.http.entity.ContentProducer;
 import org.remoteandroid.RemoteAndroidManager;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentProvider;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.os.Build;
-import android.os.Build.VERSION;
 import android.os.Bundle;
-import android.support.v4.app.ActionBar;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.Menu;
-import android.support.v4.view.Window;
 import android.view.Display;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.Window;
+
 // TODO: Approche Action bar dans le context menu
 // TODO: Ou approche action bar en simulation complète
 // TODO: Manque l'affichage de l'action bar
 
 // Checkbox pour la découverte des ProximityNetwork
-public class TestRemoteAndroidActivity extends FragmentActivity
+public class TestRemoteAndroidActivity extends SherlockFragmentActivity
 {
 	public static final String		TAG				= "RA-Test";
 
