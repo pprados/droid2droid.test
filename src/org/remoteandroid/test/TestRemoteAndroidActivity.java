@@ -15,7 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+
 import android.support.v4.app.FragmentManager;
 import android.view.Display;
 import android.view.Surface;
@@ -41,7 +41,7 @@ public class TestRemoteAndroidActivity extends SherlockFragmentActivity
 
 	SharedPreferences				mPreferences;
 
-	FragmentManager					mFragmentManager;
+	FragmentManager			mFragmentManager;
 
 	TestRemoteAndroidListFragment	mFragment;
 	
@@ -53,16 +53,15 @@ public class TestRemoteAndroidActivity extends SherlockFragmentActivity
 	{
 		finish();
 	}
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu)
-	{
-		return super.onPrepareOptionsMenu(menu);
-	}
+//	@Override
+//	public boolean onPrepareOptionsMenu(Menu menu)
+//	{
+//		return super.onPrepareOptionsMenu(menu);
+//	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		super.onCreate(savedInstanceState);
 
 // FIXME		
 //		new AsyncTask<Void, Void, Void>()
@@ -94,10 +93,13 @@ public class TestRemoteAndroidActivity extends SherlockFragmentActivity
 		requestWindowFeature(Window.FEATURE_ACTION_BAR);
         requestWindowFeature(Window.FEATURE_CONTEXT_MENU);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_main);
-		setProgressBarIndeterminateVisibility(Boolean.FALSE); // Important: Use Boolean value !
+		setSupportProgressBarIndeterminateVisibility(false);
 		final ActionBar ab = getSupportActionBar();
-		ab.setSubtitle(R.string.sub_title);
+		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		ab.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
+		ab.setDisplayShowTitleEnabled(true);
 		mQrCode=(ImageView)findViewById(R.id.qrcode);
 		
 		mQrCode.setOnClickListener(new ImageView.OnClickListener()
@@ -157,21 +159,20 @@ public class TestRemoteAndroidActivity extends SherlockFragmentActivity
 	{
 		super.onResume();
 
-		boolean menu=true;
-		if ((getResources().getConfiguration().screenLayout 
-				& Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) 
-		{
-			menu=false;
-		}		
-		if ((getResources().getConfiguration().screenLayout 
-				& Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) 
-		{
-			Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-			if (display.getOrientation()==Surface.ROTATION_0)
-				menu=false;
-		}		
-		getSupportActionBar().setDisplayOptions(0,ActionBar.DISPLAY_SHOW_HOME);
-
+//		int menu=ActionBar.DISPLAY_SHOW_HOME|ActionBar.DISPLAY_USE_LOGO;
+//		if ((getResources().getConfiguration().screenLayout 
+//				& Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) 
+//		{
+//			menu=0;
+//		}		
+//		if ((getResources().getConfiguration().screenLayout 
+//				& Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) 
+//		{
+//			Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+//			if (display.getOrientation()==Surface.ROTATION_0)
+//				menu=0;
+//		}		
+//		getSupportActionBar().setDisplayOptions(menu,ActionBar.DISPLAY_SHOW_HOME);
 		// Strict mode
 		Intent market = RemoteAndroidManager.getIntentForMarket(this);
 		if (market != null)

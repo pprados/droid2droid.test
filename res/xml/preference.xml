@@ -1,65 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	<EditTextPreference 
-		android:key="init.androids"
-		android:title="Number of androids" 
-		android:summary="Number of initial androids to connect." 
-		android:defaultValue="0"
-		android:dialogTitle="Number of android"
-		android:persistent="true"
-		/>
-	<EditTextPreference 
-		android:key="install.timeout"
-		android:title="Timeout install" 
-		android:summary="Delay to try to install an apk." 
-		android:defaultValue="60"
-		android:dialogTitle="Timeout to install"
-		android:persistent="true"
-		/>
-	<EditTextPreference 
-		android:key="execute.timeout"
-		android:title="Timeout execute" 
-		android:summary="Delay to execute a remote method." 
-		android:defaultValue="60"
-		android:dialogTitle="Timeout to execute"
-		android:persistent="true"
-		/>
-	<ListPreference 
-		android:key="install.flags"
-		android:title="Flag for install" 
-		android:summary="Force install an apk ?" 
-		android:defaultValue="0"
-		android:entries="@array/install_values"
-		android:entryValues="@array/install_codes"
-		android:dialogTitle="Enter flag value"
-		android:persistent="true"
-		/>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-	<ListPreference 
-		android:key="bind.flags"
-		android:title="Flag for bind" 
-		android:summary="Use for bind remote object" 
-		android:defaultValue="1"
-		android:entries="@array/bind_values"
-		android:entryValues="@array/bind_codes"
-		android:dialogTitle="Enter flag value"/>
+    <EditTextPreference
+        android:defaultValue="0"
+        android:dialogTitle="Number of android"
+        android:key="init.androids"
+        android:persistent="true"
+        android:summary="Number of initial androids to connect."
+        android:title="Number of androids" />
+    <EditTextPreference
+        android:defaultValue="60"
+        android:dialogTitle="Timeout to install"
+        android:key="install.timeout"
+        android:persistent="true"
+        android:summary="Delay to try to install an apk."
+        android:title="Timeout install" />
+    <EditTextPreference
+        android:defaultValue="60"
+        android:dialogTitle="Timeout to execute"
+        android:key="execute.timeout"
+        android:persistent="true"
+        android:summary="Delay to execute a remote method."
+        android:title="Timeout execute" />
 
-	<ListPreference 
-		android:key="discover.mode"
-		android:title="Discover mode" 
-		android:summary="Binded, Anonymous,no bluetooth, no ethernet" 
-		android:defaultValue="1"
-		android:entries="@array/discover_values"
-		android:entryValues="@array/discover_codes"
-		android:dialogTitle="Enter flag value"/>
+    <ListPreference
+        android:defaultValue="0"
+        android:dialogTitle="Enter flag value"
+        android:entries="@array/install_values"
+        android:entryValues="@array/install_codes"
+        android:key="install.flags"
+        android:persistent="true"
+        android:summary="Force install an apk ?"
+        android:title="Flag for install" />
+    <ListPreference
+        android:defaultValue="1"
+        android:dialogTitle="Enter flag value"
+        android:entries="@array/bind_values"
+        android:entryValues="@array/bind_codes"
+        android:key="bind.flags"
+        android:summary="Use for bind remote object"
+        android:title="Flag for bind" />
+    <ListPreference
+        android:defaultValue="1"
+        android:dialogTitle="Enter flag value"
+        android:entries="@array/discover_values"
+        android:entryValues="@array/discover_codes"
+        android:key="discover.mode"
+        android:summary="Binded, Anonymous,no bluetooth, no ethernet"
+        android:title="Discover mode" />
 
-<!-- 	<ListPreference  -->
-<!-- 		android:key="applicationcontext.flags" -->
-<!-- 		android:title="Flag for bind application context"  -->
-<!-- 		android:summary="Use for bind remote application context"  -->
-<!-- 		android:defaultValue="0" -->
-<!-- 		android:entries="@array/applicationcontext_values" -->
-<!-- 		android:entryValues="@array/applicationcontext_codes" -->
-<!-- 		android:dialogTitle="Enter flag value"/> -->
+    <!-- <ListPreference -->
+    <!-- android:key="applicationcontext.flags" -->
+    <!-- android:title="Flag for bind application context" -->
+    <!-- android:summary="Use for bind remote application context" -->
+    <!-- android:defaultValue="0" -->
+    <!-- android:entries="@array/applicationcontext_values" -->
+    <!-- android:entryValues="@array/applicationcontext_codes" -->
+    <!-- android:dialogTitle="Enter flag value"/> -->
 
 </PreferenceScreen>

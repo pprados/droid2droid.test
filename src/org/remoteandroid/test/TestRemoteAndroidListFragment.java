@@ -16,6 +16,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -35,8 +37,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+
 
 // Checkbox pour la découverte des ProximityNetwork
 public class TestRemoteAndroidListFragment extends SherlockListFragment 
@@ -116,14 +122,9 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     		mRetain.mItemAdapter.remove(key);
     		mRetain.mItemAdapter.add(key);
     	}
-//    	while (mRetain.mDiscoveredAndroid==null)
-//    	{
-//    		try { Thread.sleep(500); } catch (Exception e) {}
-//    	}
-    	if (mRetain==null)
-    		Log.d("ERROR","mRetina=null");
+    	waitManager();
     	if (mRetain.mDiscoveredAndroid==null)
-    		Log.d("ERROR","mRetina.mDiscoveredAndroid=null");
+    		return;
     	if (!mRetain.mDiscoveredAndroid.contains(info))
     	{
     		mRetain.mDiscoveredAndroid.add(info);
@@ -159,7 +160,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	{
 		mDiscover.setChecked(status);
 		mDiscover.setIcon(status ? android.R.drawable.ic_menu_close_clear_cancel : android.R.drawable.ic_menu_search);
-		((FragmentActivity)getActivity()).setProgressBarIndeterminateVisibility(status ? Boolean.TRUE : Boolean.FALSE);
+		((SherlockFragmentActivity)getActivity()).setSupportProgressBarIndeterminateVisibility(status);
 	}
 	private void setBurst(boolean status)
 	{
@@ -192,6 +193,27 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		super.onSaveInstanceState(outState);
 		if (mRetain!=null)
 			outState.putBoolean(EXTRA_BURST, mRetain.mBurst);
+	}
+	private static final long MAX_WAIT_MANAGER=5000L;
+	private static void waitManager()
+	{
+		long start=System.currentTimeMillis();
+		while (mRetain.mManager==null)
+		{
+			try
+			{
+				Thread.sleep(500);
+			}
+			catch (InterruptedException e)
+			{
+				// Ignore
+			}
+			if (System.currentTimeMillis()-start>MAX_WAIT_MANAGER)
+			{
+				Log.w(TAG,"Impossible to connect to manager.");
+				break;
+			}
+		}
 	}
 	@Override
     public void onCreate(Bundle savedInstanceState) 
@@ -376,16 +398,14 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
     	}.execute();
 	}
 
-	// FIXME: Sherlock
-//	@Override
-//	public void onCreateOptionsMenu(Menu menu, android.view.MenuInflater inflater)
-//	{
-//		inflater.inflate(R.menu.menu, menu);
-//		mDiscover=menu.findItem(R.id.discover);
-//		mBurst=menu.findItem(R.id.burst);
-//		getActivity().setProgressBarIndeterminateVisibility(Boolean.TRUE);
-//		super.onCreateOptionsMenu(menu, inflater);
-//	}
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+	{
+		inflater.inflate(R.menu.menu, menu);
+		mDiscover=menu.findItem(R.id.discover);
+		mBurst=menu.findItem(R.id.burst);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
@@ -411,7 +431,16 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 		}
 		else if (id == R.id.add)
 		{
-			startActivityForResult(new Intent(RemoteAndroidManager.ACTION_CONNECT_ANDROID), REQUEST_CONNECT_CODE);
+			Intent intent=new Intent(RemoteAndroidManager.ACTION_CONNECT_ANDROID);
+//			intent.setFlags(
+//				Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
+//				|Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+//				);
+			intent.putExtra(RemoteAndroidManager.EXTRA_THEME_ID,android.R.style.Theme_Holo_Light_DarkActionBar);
+//			intent.putExtra(RemoteAndroidManager.EXTRA_TITLE, "TEST");
+			intent.putExtra(RemoteAndroidManager.EXTRA_SUBTITLE, "Select device.");
+			
+			startActivityForResult(intent, REQUEST_CONNECT_CODE);
 		}
 		else if (id == R.id.clear)
 		{
