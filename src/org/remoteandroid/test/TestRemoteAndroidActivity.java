@@ -3,29 +3,25 @@ package org.remoteandroid.test;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.remoteandroid.R;
+import org.remoteandroid.RemoteAndroidInfo;
 import org.remoteandroid.RemoteAndroidManager;
+import org.remoteandroid.tools.NfcSherlockFragmentActivity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-
 import android.support.v4.app.FragmentManager;
-import android.view.Display;
-import android.view.Surface;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.Window;
 
 // TODO: Approche Action bar dans le context menu
@@ -33,63 +29,28 @@ import com.actionbarsherlock.view.Window;
 // TODO: Manque l'affichage de l'action bar
 
 // Checkbox pour la découverte des ProximityNetwork
-public class TestRemoteAndroidActivity extends SherlockFragmentActivity
+public class TestRemoteAndroidActivity extends NfcSherlockFragmentActivity
 {
 	public static final String		TAG				= "RA-Test";
 
-	private static final int		DIALOG_MARKET	= 1;
-
 	SharedPreferences				mPreferences;
 
-	FragmentManager			mFragmentManager;
+	FragmentManager					mFragmentManager;
 
 	TestRemoteAndroidListFragment	mFragment;
 	
 	ImageView						mQrCode;
 	boolean							mQrCodeBig;
 
-	@Override
-	public void onBackPressed()
-	{
-		finish();
-	}
 //	@Override
-//	public boolean onPrepareOptionsMenu(Menu menu)
+//	public void onBackPressed()
 //	{
-//		return super.onPrepareOptionsMenu(menu);
+//		finish();
 //	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-
-// FIXME		
-//		new AsyncTask<Void, Void, Void>()
-//		{
-//			private Set<BluetoothDevice> devices;
-//			protected void onPreExecute() 
-//			{
-//				BluetoothAdapter adapter=BluetoothAdapter.getDefaultAdapter();
-//				devices=adapter.getBondedDevices();
-//				
-//			}
-//			protected Void doInBackground(Void[] params) 
-//			{
-//				try
-//				{
-//					BluetoothDevice dev=devices.iterator().next();
-//					UUID uuid=uuid=BluetoothSocketBossSender.sKeys[0];
-//					BluetoothSocket socket=dev.createRfcommSocketToServiceRecord(uuid);
-//					socket.connect();
-//					socket.close();
-//				}
-//				catch (IOException e)
-//				{
-//					e.printStackTrace();
-//				}
-//				return null;
-//			}
-//		}.execute();
 		requestWindowFeature(Window.FEATURE_ACTION_BAR);
         requestWindowFeature(Window.FEATURE_CONTEXT_MENU);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -101,7 +62,7 @@ public class TestRemoteAndroidActivity extends SherlockFragmentActivity
 		ab.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 		ab.setDisplayShowTitleEnabled(true);
 		mQrCode=(ImageView)findViewById(R.id.qrcode);
-		
+		mQrCode.setVisibility(View.GONE);
 		mQrCode.setOnClickListener(new ImageView.OnClickListener()
 		{
 			
@@ -154,62 +115,21 @@ public class TestRemoteAndroidActivity extends SherlockFragmentActivity
 				.findFragmentById(R.id.fragment);
 	}
 
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
 
-//		int menu=ActionBar.DISPLAY_SHOW_HOME|ActionBar.DISPLAY_USE_LOGO;
-//		if ((getResources().getConfiguration().screenLayout 
-//				& Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) 
-//		{
-//			menu=0;
-//		}		
-//		if ((getResources().getConfiguration().screenLayout 
-//				& Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) 
-//		{
-//			Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-//			if (display.getOrientation()==Surface.ROTATION_0)
-//				menu=0;
-//		}		
-//		getSupportActionBar().setDisplayOptions(menu,ActionBar.DISPLAY_SHOW_HOME);
-		// Strict mode
-		Intent market = RemoteAndroidManager.getIntentForMarket(this);
-		if (market != null)
-		{
-			showDialog(DIALOG_MARKET);
-		}
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+	}
+	@Override
+	protected RemoteAndroidManager getRemoteAndroidManager()
+	{
+		return mFragment.getRemoteAndroidManager();
 	}
 
 	@Override
-	public Dialog onCreateDialog(int id)
+	public void onNfcDiscover(RemoteAndroidInfo info)
 	{
-		switch (id)
-		{
-			case DIALOG_MARKET:
-				return new AlertDialog.Builder(this)
-						.setMessage("Install the application Remote Android ?")
-						.setPositiveButton("Install", new DialogInterface.OnClickListener()
-						{
-
-							@Override
-							public void onClick(DialogInterface paramDialogInterface, int paramInt)
-							{
-								startActivity(RemoteAndroidManager
-										.getIntentForMarket(TestRemoteAndroidActivity.this));
-								finish();
-							}
-						}).setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-						{
-
-							@Override
-							public void onClick(DialogInterface paramDialogInterface, int paramInt)
-							{
-								finish();
-							}
-						}).create();
-			default:
-				return null;
-		}
+		mFragment.onDiscover(info, false);
 	}
 }

@@ -6,12 +6,13 @@
       android:installLocation="auto"
 >
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="11"/>
+	<user-feature android:name="android.hardware.nfc" android:required="false"/>
     
 	<uses-permission android:name="android.permission.INTERNET" />
  	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	    
-	<uses-permission android:name="android.permission.BLUETOOTH" />
-<!-- 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> -->
+    <!-- For NFC -->
+    <uses-permission android:name="android.permission.NFC" />
 	    
 	<!-- For receive discover events -->
 	<uses-permission android:name="org.remoteandroid.permission.discover.RECEIVE"/>

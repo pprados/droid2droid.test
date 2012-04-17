@@ -64,6 +64,8 @@ public class RemoteAndroidContext
 		}
 		String uri=mUri.substring(mUri.indexOf("] ")+2);
 		mState=State.BindingRemoteAndroid;
+		SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(context.getBaseContext());
+		int flags=Integer.parseInt(preferences.getString("remote_bind.flags","0"));
 		Intent intent=new Intent(Intent.ACTION_MAIN,Uri.parse(uri));
 		mManager.bindRemoteAndroid(
 				intent, 
@@ -90,7 +92,7 @@ public class RemoteAndroidContext
 						setStatus("Android disconnected");
 					}
 					
-				}, 0);
+				}, flags);
 	}
 	public void disconnect(Context context)
 	{
@@ -169,11 +171,6 @@ public class RemoteAndroidContext
 		SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(context.getBaseContext());
 		int flags=Integer.parseInt(preferences.getString("bind.flags","1"));
 		Intent intent=new Intent("org.remoteandroid.test.TestService");
-		intent.putExtra("boolean", true);
-		intent.putExtra("int", 1);
-		intent.putExtra("long", 1L);
-		intent.putExtra("float", (float)1.0);
-		intent.putExtra("double", 1.0);
 		boolean rc=mRemoteAndroid.bindService(
 				intent,
 				new ServiceConnection()

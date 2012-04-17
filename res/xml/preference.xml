@@ -38,8 +38,16 @@
         android:entries="@array/bind_values"
         android:entryValues="@array/bind_codes"
         android:key="bind.flags"
-        android:summary="Use for bind remote object"
+        android:summary="Use for bind remote service"
         android:title="Flag for bind" />
+    <ListPreference
+        android:defaultValue="0"
+        android:dialogTitle="Enter flag value"
+        android:entries="@array/remote_bind_values"
+        android:entryValues="@array/remote_bind_codes"
+        android:key="remote_bind.flags"
+        android:summary="Use for bind remote android"
+        android:title="Flag for remote binding" />
     <ListPreference
         android:defaultValue="1"
         android:dialogTitle="Enter flag value"

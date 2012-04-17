@@ -16,8 +16,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -68,7 +66,6 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 
 	private List<String> mItems=new ArrayList<String>();
 
-	private View mViewer;
 	private static Retain mRetain;
 	
 	static class Retain
@@ -216,7 +213,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		}
 	}
 	@Override
-    public void onCreate(Bundle savedInstanceState) 
+    public void onActivityCreated(Bundle savedInstanceState) 
     {
 		Log.v(TAG,"Fragment.onCreate");
         super.onCreate(savedInstanceState);
@@ -225,6 +222,7 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
         if (market==null)
         {
 //	        mRetain=(Retain)getActivity().getLastNonConfigurationInstance(); // FIXME: single fragment in activity
+mRetain=null;        	
 	        if (mRetain==null)
 	        {
 	        	mRetain=new Retain();
@@ -266,6 +264,12 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 	    				Caches caches;
 	    				if (convertView==null)
 	    				{
+	    					Activity activity=getActivity();
+	    					if (activity==null)
+	    					{
+	    						Log.d(TAG,"null activity");
+	    						return null;
+	    					}
 	    					view=getActivity().getLayoutInflater().inflate(R.layout.test_item, null);
 	    					caches=new Caches();
 	    					caches.mUri=(Spinner)view.findViewById(R.id.uri);
@@ -439,6 +443,9 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 			intent.putExtra(RemoteAndroidManager.EXTRA_THEME_ID,android.R.style.Theme_Holo_Light_DarkActionBar);
 //			intent.putExtra(RemoteAndroidManager.EXTRA_TITLE, "TEST");
 			intent.putExtra(RemoteAndroidManager.EXTRA_SUBTITLE, "Select device.");
+			SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+			int flags=Integer.parseInt(preferences.getString("remote_bind.flags","0"));
+			intent.putExtra(RemoteAndroidManager.EXTRA_FLAGS, flags);
 			
 			startActivityForResult(intent, REQUEST_CONNECT_CODE);
 		}
@@ -447,9 +454,20 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 			if (mRetain.mDiscoveredAndroid!=null)
 			{
 				mRetain.mDiscoveredAndroid.clear();
-				for (RemoteAndroidContext rac:mRetain.mRemoteAndroids)
+				for (final RemoteAndroidContext rac:mRetain.mRemoteAndroids)
 				{
-					if (rac.mRemoteAndroid!=null) rac.mRemoteAndroid.close();
+					if (rac.mRemoteAndroid!=null) 
+					{
+						// With strict mode
+						mExecutors.execute(new Runnable()
+						{
+							@Override
+							public void run()
+							{
+								rac.mRemoteAndroid.close();
+							}
+						});
+					}
 				}
 				mRetain.mRemoteAndroids.clear();
 		    	initAndroids();
@@ -604,5 +622,9 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 	{
+	}
+	public final RemoteAndroidManager getRemoteAndroidManager()
+	{
+		return mRetain.mManager;
 	}
 }
