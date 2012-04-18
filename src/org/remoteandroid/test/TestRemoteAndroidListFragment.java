@@ -59,30 +59,19 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     private ExecutorService mExecutors=Executors.newCachedThreadPool();
 	private Handler mHandler=new Handler();
 	SharedPreferences mPreferences;
-	MenuItem mDiscover;
-	MenuItem mBurst;
+	MenuItem mDiscoverMenu;
+	MenuItem mBurstMenu;
 	
 	boolean mIsDiscover;
 
 	private List<String> mItems=new ArrayList<String>();
 
-	private static Retain mRetain;
-	
-	static class Retain
-	{
-		private volatile ListRemoteAndroidInfo mDiscoveredAndroid;
-		private ArrayList<RemoteAndroidContext> mRemoteAndroids=new ArrayList<RemoteAndroidContext>(5);
-		private BaseAdapter mAdapter;
-		private ArrayAdapter<String> mItemAdapter;
-		private boolean mBurst;
-		private RemoteAndroidManager mManager;
-	}
-	
-//	@Override
-	public Object onRetainNonConfigurationInstance()
-	{
-		return mRetain;
-	}
+	private volatile ListRemoteAndroidInfo mDiscoveredAndroid;
+	private ArrayList<RemoteAndroidContext> mRemoteAndroids=new ArrayList<RemoteAndroidContext>(5);
+	private BaseAdapter mAdapter;
+	private ArrayAdapter<String> mItemAdapter;
+	private boolean mBurst;
+	private RemoteAndroidManager mManager;
 	
 	@Override
 	public void onDiscoverStart()
@@ -112,28 +101,27 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	private void addRemoteAndroid(RemoteAndroidInfo info, boolean replace)
 	{
 		String[] uris=info.getUris();
-		mRetain.mItemAdapter.remove(URL_NOT_KNOWN);
+		mItemAdapter.remove(URL_NOT_KNOWN);
     	for (String s:uris)
     	{
     		final String key='['+info.getName()+"] "+s;
-    		mRetain.mItemAdapter.remove(key);
-    		mRetain.mItemAdapter.add(key);
+    		mItemAdapter.remove(key);
+    		mItemAdapter.add(key);
     	}
-    	waitManager();
-    	if (mRetain.mDiscoveredAndroid==null)
+    	if (mDiscoveredAndroid==null)
     		return;
-    	if (!mRetain.mDiscoveredAndroid.contains(info))
+    	if (!mDiscoveredAndroid.contains(info))
     	{
-    		mRetain.mDiscoveredAndroid.add(info);
+    		mDiscoveredAndroid.add(info);
     		replace=false;
     	}
 		if (!replace)
 		{
 			if (uris.length!=0)
 			{
-				mRetain.mRemoteAndroids.add(new RemoteAndroidContext(getActivity(),mRetain.mManager,this));
-		    	int position=mRetain.mRemoteAndroids.size()-1;
-		    	RemoteAndroidContext racontext=mRetain.mRemoteAndroids.get(position);
+				mRemoteAndroids.add(new RemoteAndroidContext(getActivity(),mManager,this));
+		    	int position=mRemoteAndroids.size()-1;
+		    	RemoteAndroidContext racontext=mRemoteAndroids.get(position);
 		    	racontext.mUri='['+info.getName()+"] "+uris[0];
 			}
 			else
@@ -141,7 +129,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				Log.e(TAG,"Discover error"); //FIXME: Discover error
 			}
 		}
-		mRetain.mItemAdapter.sort(new Comparator<String>()
+		mItemAdapter.sort(new Comparator<String>()
 		{
 			@Override
 			public int compare(String object1, String object2)
@@ -149,21 +137,21 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				return object1.compareTo(object2);
 			}
 		});
-		mRetain.mItemAdapter.notifyDataSetChanged();
-		mRetain.mAdapter.notifyDataSetChanged();
+		mItemAdapter.notifyDataSetChanged();
+		mAdapter.notifyDataSetChanged();
 	}
 
 	private void setDiscover(boolean status)
 	{
-		mDiscover.setChecked(status);
-		mDiscover.setIcon(status ? android.R.drawable.ic_menu_close_clear_cancel : android.R.drawable.ic_menu_search);
+		mDiscoverMenu.setChecked(status);
+		mDiscoverMenu.setIcon(status ? android.R.drawable.ic_menu_close_clear_cancel : android.R.drawable.ic_menu_search);
 		((SherlockFragmentActivity)getActivity()).setSupportProgressBarIndeterminateVisibility(status);
 	}
 	private void setBurst(boolean status)
 	{
-		mBurst.setChecked(status);
-		mBurst.setIcon(status ? R.drawable.ic_menu_burst_toggle : R.drawable.ic_menu_burst);
-		mRetain.mBurst=status;
+		mBurstMenu.setChecked(status);
+		mBurstMenu.setIcon(status ? R.drawable.ic_menu_burst_toggle : R.drawable.ic_menu_burst);
+		mBurst=status;
 	}
 	
 	
@@ -188,30 +176,9 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	public void onSaveInstanceState(Bundle outState)
 	{
 		super.onSaveInstanceState(outState);
-		if (mRetain!=null)
-			outState.putBoolean(EXTRA_BURST, mRetain.mBurst);
+		outState.putBoolean(EXTRA_BURST, mBurst);
 	}
 	private static final long MAX_WAIT_MANAGER=5000L;
-	private static void waitManager()
-	{
-		long start=System.currentTimeMillis();
-		while (mRetain.mManager==null)
-		{
-			try
-			{
-				Thread.sleep(500);
-			}
-			catch (InterruptedException e)
-			{
-				// Ignore
-			}
-			if (System.currentTimeMillis()-start>MAX_WAIT_MANAGER)
-			{
-				Log.w(TAG,"Impossible to connect to manager.");
-				break;
-			}
-		}
-	}
 	@Override
     public void onActivityCreated(Bundle savedInstanceState) 
     {
@@ -222,127 +189,122 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
         if (market==null)
         {
 //	        mRetain=(Retain)getActivity().getLastNonConfigurationInstance(); // FIXME: single fragment in activity
-mRetain=null;        	
-	        if (mRetain==null)
-	        {
-	        	mRetain=new Retain();
-	        	RemoteAndroidManager.bindManager(getActivity(), new ManagerListener()
-	        	{
+        	RemoteAndroidManager.bindManager(getActivity(), new ManagerListener()
+        	{
 
-					@Override
-					public void bind(RemoteAndroidManager manager)
-					{
-						mRetain.mManager=manager;
-						mRetain.mDiscoveredAndroid=mRetain.mManager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
-					}
+				@Override
+				public void bind(RemoteAndroidManager manager)
+				{
+					mManager=manager;
+					mDiscoveredAndroid=mManager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
+				}
 
-					@Override
-					public void unbind(RemoteAndroidManager manager)
-					{
-						mRetain.mDiscoveredAndroid=null;
-	    	        	setDiscover(false);
-	    	        	setBurst(mRetain.mBurst);
-						mRetain.mManager=null;
-					}
-	        		
-	        	});
-	        	if (savedInstanceState!=null)
-	        	{
-	        		mRetain.mBurst=savedInstanceState.getBoolean(EXTRA_BURST);
-	        	}
-	        	
-	            mRetain.mItemAdapter=
-	        		new ArrayAdapter<String>(getActivity(),
-	        				android.R.layout.simple_spinner_item,mItems);
-	            mRetain.mAdapter = new BaseAdapter()
-	    		{
-	    			
-	    			@Override
-	    			public View getView(int position, View convertView, ViewGroup parent)
-	    			{
-	    				View view;
-	    				Caches caches;
-	    				if (convertView==null)
-	    				{
-	    					Activity activity=getActivity();
-	    					if (activity==null)
-	    					{
-	    						Log.d(TAG,"null activity");
-	    						return null;
-	    					}
-	    					view=getActivity().getLayoutInflater().inflate(R.layout.test_item, null);
-	    					caches=new Caches();
-	    					caches.mUri=(Spinner)view.findViewById(R.id.uri);
-	    					caches.mUri.setOnItemSelectedListener(TestRemoteAndroidListFragment.this);
-	    					caches.mActive=(ToggleButton)view.findViewById(R.id.active);
-	    					caches.mActive.setOnClickListener(TestRemoteAndroidListFragment.this);
-	    					caches.mInstall=(Button)view.findViewById(R.id.install);
-	    					caches.mInstall.setOnClickListener(TestRemoteAndroidListFragment.this);
-	    					caches.mBind=(Button)view.findViewById(R.id.bind);
-	    					caches.mBind.setOnClickListener(TestRemoteAndroidListFragment.this);
-	    					caches.mInvoke=(Button)view.findViewById(R.id.invoke);
-	    					caches.mInvoke.setOnClickListener(TestRemoteAndroidListFragment.this);
-	    					caches.mStatus=(TextView)view.findViewById(R.id.status);
-	    					view.setTag(caches);
-	    					
-	    					mRetain.mItemAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	    					caches.mUri.setAdapter(mRetain.mItemAdapter);
-	    					
-	    				}
-	    				else
-	    				{
-	    					view=convertView;
-	    					caches=(Caches)view.getTag();
-	    				}
-	    				caches.mUri.setTag(position);
-	    				caches.mActive.setTag(position);
-	    				caches.mInstall.setTag(position);
-	    				caches.mBind.setTag(position);
-	    				caches.mInvoke.setTag(position);
-	    				RemoteAndroidContext racontext=mRetain.mRemoteAndroids.get(position);
-	    				if (racontext.mUri!=null)
-	    				{
-	    					
-	    					for (int i=0;i<mItems.size();++i)
-	    					{
-	    						if (racontext.mUri.equals(mItems.get(i)))
-	    						{
-	    							caches.mUri.setSelection(i);
-	    							break;
-	    						}
-	    					}
-	    				}
-	    				caches.mActive.setEnabled((racontext.mState!=RemoteAndroidContext.State.BindingRemoteAndroid));
-	    				caches.mActive.setChecked(racontext.mRemoteAndroid!=null);
-	    				boolean enabled=(racontext.mRemoteAndroid!=null);
-	    				caches.mInstall.setEnabled(enabled);
-	    				caches.mBind.setEnabled(enabled);
-	    				caches.mInvoke.setEnabled(racontext.mRemoteObject!=null);
-	    				caches.mStatus.setText(racontext.mStatus);
-	    				return view;
-	    			}
-	
-	    			@Override
-	    			public long getItemId(int position)
-	    			{
-	    				return position;
-	    			}
-	    			
-	    			@Override
-	    			public Object getItem(int position)
-	    			{
-	    				// TODO Auto-generated method stub
-	    				return null;
-	    			}
-	    			
-	    			@Override
-	    			public int getCount()
-	    			{
-	    				return mRetain.mRemoteAndroids.size();
-	    			}
-	    		};
-	        }
-	        setListAdapter(mRetain.mAdapter);
+				@Override
+				public void unbind(RemoteAndroidManager manager)
+				{
+					mDiscoveredAndroid=null;
+    	        	setDiscover(false);
+    	        	setBurst(mBurst);
+					mManager=null;
+				}
+        		
+        	});
+        	if (savedInstanceState!=null)
+        	{
+        		mBurst=savedInstanceState.getBoolean(EXTRA_BURST);
+        	}
+        	
+            mItemAdapter=
+        		new ArrayAdapter<String>(getActivity(),
+        				android.R.layout.simple_spinner_item,mItems);
+            mAdapter = new BaseAdapter()
+    		{
+    			
+    			@Override
+    			public View getView(int position, View convertView, ViewGroup parent)
+    			{
+    				View view;
+    				Caches caches;
+    				if (convertView==null)
+    				{
+    					Activity activity=getActivity();
+    					if (activity==null)
+    					{
+    						Log.d(TAG,"null activity");
+    						return null;
+    					}
+    					view=getActivity().getLayoutInflater().inflate(R.layout.test_item, null);
+    					caches=new Caches();
+    					caches.mUri=(Spinner)view.findViewById(R.id.uri);
+    					caches.mUri.setOnItemSelectedListener(TestRemoteAndroidListFragment.this);
+    					caches.mActive=(ToggleButton)view.findViewById(R.id.active);
+    					caches.mActive.setOnClickListener(TestRemoteAndroidListFragment.this);
+    					caches.mInstall=(Button)view.findViewById(R.id.install);
+    					caches.mInstall.setOnClickListener(TestRemoteAndroidListFragment.this);
+    					caches.mBind=(Button)view.findViewById(R.id.bind);
+    					caches.mBind.setOnClickListener(TestRemoteAndroidListFragment.this);
+    					caches.mInvoke=(Button)view.findViewById(R.id.invoke);
+    					caches.mInvoke.setOnClickListener(TestRemoteAndroidListFragment.this);
+    					caches.mStatus=(TextView)view.findViewById(R.id.status);
+    					view.setTag(caches);
+    					
+    					mItemAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    					caches.mUri.setAdapter(mItemAdapter);
+    					
+    				}
+    				else
+    				{
+    					view=convertView;
+    					caches=(Caches)view.getTag();
+    				}
+    				caches.mUri.setTag(position);
+    				caches.mActive.setTag(position);
+    				caches.mInstall.setTag(position);
+    				caches.mBind.setTag(position);
+    				caches.mInvoke.setTag(position);
+    				RemoteAndroidContext racontext=mRemoteAndroids.get(position);
+    				if (racontext.mUri!=null)
+    				{
+    					
+    					for (int i=0;i<mItems.size();++i)
+    					{
+    						if (racontext.mUri.equals(mItems.get(i)))
+    						{
+    							caches.mUri.setSelection(i);
+    							break;
+    						}
+    					}
+    				}
+    				caches.mActive.setEnabled((racontext.mState!=RemoteAndroidContext.State.BindingRemoteAndroid));
+    				caches.mActive.setChecked(racontext.mRemoteAndroid!=null);
+    				boolean enabled=(racontext.mRemoteAndroid!=null);
+    				caches.mInstall.setEnabled(enabled);
+    				caches.mBind.setEnabled(enabled);
+    				caches.mInvoke.setEnabled(racontext.mRemoteObject!=null);
+    				caches.mStatus.setText(racontext.mStatus);
+    				return view;
+    			}
+
+    			@Override
+    			public long getItemId(int position)
+    			{
+    				return position;
+    			}
+    			
+    			@Override
+    			public Object getItem(int position)
+    			{
+    				// TODO Auto-generated method stub
+    				return null;
+    			}
+    			
+    			@Override
+    			public int getCount()
+    			{
+    				return mRemoteAndroids.size();
+    			}
+    		};
+	        setListAdapter(mAdapter);
 	        setHasOptionsMenu(true);
         }
     }
@@ -355,19 +317,14 @@ mRetain=null;
        	initAndroids();
     }
 
-    @Override
-    public void onPause()
-    {
-		Log.v(TAG,"Fragment.onPause");
-    	super.onPause();
-    }
 	@Override
 	public void onDestroy()
 	{
 		super.onDestroy();
-		Log.v(TAG,"Fragment.onDestroy");
-		mRetain.mDiscoveredAndroid.close();
-		mRetain.mManager.close();
+		if (mDiscoveredAndroid!=null)
+			mDiscoveredAndroid.close();
+		if (mManager!=null)
+			mManager.close();
 	}
 	
 	private void initAndroids()
@@ -383,19 +340,21 @@ mRetain=null;
     		@Override
     		protected void onPostExecute(SharedPreferences preferences)
     		{
+    			if (mItemAdapter==null)
+    				return;
     			mPreferences=preferences;
     			int size=Integer.parseInt(preferences.getString("init.androids", "0"));
-    	    	if (mRetain!=null && mRetain.mRemoteAndroids!=null && mRetain.mRemoteAndroids.size()<=size)
+    	    	if (mRemoteAndroids!=null && mRemoteAndroids.size()<=size)
     	    	{
     				{
-    					for (int i=mRetain.mRemoteAndroids.size();i<size;++i)
+    					for (int i=mRemoteAndroids.size();i<size;++i)
     					{
-    						RemoteAndroidContext context=new RemoteAndroidContext(getActivity(),mRetain.mManager,TestRemoteAndroidListFragment.this);
+    						RemoteAndroidContext context=new RemoteAndroidContext(getActivity(),mManager,TestRemoteAndroidListFragment.this);
     						context.mUri=(mItems.size()>0) ? mItems.get(0) : URL_NOT_KNOWN;
-    						mRetain.mRemoteAndroids.add(context);
+    						mRemoteAndroids.add(context);
     					}
-    					mRetain.mItemAdapter.notifyDataSetChanged();
-    					mRetain.mAdapter.notifyDataSetChanged();
+    					mItemAdapter.notifyDataSetChanged();
+    					mAdapter.notifyDataSetChanged();
     				}
     	    	}
     		}
@@ -406,8 +365,8 @@ mRetain=null;
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
 		inflater.inflate(R.menu.menu, menu);
-		mDiscover=menu.findItem(R.id.discover);
-		mBurst=menu.findItem(R.id.burst);
+		mDiscoverMenu=menu.findItem(R.id.discover);
+		mBurstMenu=menu.findItem(R.id.burst);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
@@ -420,16 +379,16 @@ mRetain=null;
 			item.setChecked(!item.isChecked());
 			if (item.isChecked())
 			{
-				if (mRetain.mDiscoveredAndroid==null) return false;
+				if (mDiscoveredAndroid==null) return false;
 
 				SharedPreferences preferences=mPreferences;
 				int flags=Integer.parseInt(preferences.getString("discover.mode","1"));
-				mRetain.mDiscoveredAndroid.start(flags,RemoteAndroidManager.DISCOVER_INFINITELY);
+				mDiscoveredAndroid.start(flags,RemoteAndroidManager.DISCOVER_INFINITELY);
 				mIsDiscover=true;
 			}
 			else
 			{
-				mRetain.mDiscoveredAndroid.cancel();
+				mDiscoveredAndroid.cancel();
 				mIsDiscover=false;
 			}
 		}
@@ -451,10 +410,10 @@ mRetain=null;
 		}
 		else if (id == R.id.clear)
 		{
-			if (mRetain.mDiscoveredAndroid!=null)
+			if (mDiscoveredAndroid!=null)
 			{
-				mRetain.mDiscoveredAndroid.clear();
-				for (final RemoteAndroidContext rac:mRetain.mRemoteAndroids)
+				mDiscoveredAndroid.clear();
+				for (final RemoteAndroidContext rac:mRemoteAndroids)
 				{
 					if (rac.mRemoteAndroid!=null) 
 					{
@@ -469,9 +428,9 @@ mRetain=null;
 						});
 					}
 				}
-				mRetain.mRemoteAndroids.clear();
+				mRemoteAndroids.clear();
 		    	initAndroids();
-				mRetain.mAdapter.notifyDataSetChanged();
+				mAdapter.notifyDataSetChanged();
 			}
 		}
 		else if (id == R.id.burst)
@@ -499,15 +458,15 @@ mRetain=null;
 	public void onClick(final View view)
 	{
 		final int position=(Integer)view.getTag();
-		final RemoteAndroidContext context=mRetain.mRemoteAndroids.get(position);
+		final RemoteAndroidContext context=mRemoteAndroids.get(position);
 		switch (view.getId())
 		{
 			case R.id.active:
 				Log.d(TAG,"Active "+position);
 				view.setEnabled(false);
-				if (mRetain.mBurst)
+				if (mBurst)
 				{
-					for (final RemoteAndroidContext ra:mRetain.mRemoteAndroids)
+					for (final RemoteAndroidContext ra:mRemoteAndroids)
 					{
 						mExecutors.execute(new Runnable()
 						{
@@ -541,9 +500,9 @@ mRetain=null;
 				
 			case R.id.install:
 				Log.d(TAG,"Install "+position);
-				if (mRetain.mBurst)
+				if (mBurst)
 				{
-					for (RemoteAndroidContext ra:mRetain.mRemoteAndroids) // FIXME Install en mode burst
+					for (RemoteAndroidContext ra:mRemoteAndroids) // FIXME Install en mode burst
 					{
 						ra.install(getActivity());
 					}					
@@ -554,9 +513,9 @@ mRetain=null;
 				
 			case R.id.bind:
 				Log.d(TAG,"Invoke "+position);
-				if (mRetain.mBurst)
+				if (mBurst)
 				{
-					for (final RemoteAndroidContext ra:mRetain.mRemoteAndroids)
+					for (final RemoteAndroidContext ra:mRemoteAndroids)
 					{
 						mExecutors.execute(new Runnable()
 						{
@@ -574,9 +533,9 @@ mRetain=null;
 				
 			case R.id.invoke:
 				Log.d(TAG,"Invoke "+position);
-				if (mRetain.mBurst)
+				if (mBurst)
 				{
-					for (final RemoteAndroidContext ra:mRetain.mRemoteAndroids)
+					for (final RemoteAndroidContext ra:mRemoteAndroids)
 					{
 						mExecutors.execute(new Runnable()
 						{
@@ -597,7 +556,7 @@ mRetain=null;
 	public void onItemSelected(AdapterView<?> parent, View view, int itemPosition, long id)
 	{
 		final int position=(Integer)parent.getTag();
-		RemoteAndroidContext context=mRetain.mRemoteAndroids.get(position);
+		RemoteAndroidContext context=mRemoteAndroids.get(position);
 		context.mUri=mItems.get(itemPosition);
 	}
 	@Override
@@ -613,8 +572,7 @@ mRetain=null;
 			@Override
 			public void run()
 			{
-				if (mRetain!=null)
-					mRetain.mAdapter.notifyDataSetChanged();
+					mAdapter.notifyDataSetChanged();
 			}
 		});
 	}
@@ -625,6 +583,6 @@ mRetain=null;
 	}
 	public final RemoteAndroidManager getRemoteAndroidManager()
 	{
-		return mRetain.mManager;
+		return mManager;
 	}
 }
