@@ -7,9 +7,9 @@ import org.remoteandroid.RemoteAndroidNfcHelper;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.app.SherlockActivity;
 
-public abstract class NfcSherlockFragmentActivity extends SherlockFragmentActivity
+public abstract class NfcSherlockActivity extends SherlockActivity
 implements RemoteAndroidNfcHelper.OnNfcDiscover
 {
 	protected RemoteAndroidNfcHelper 		mNfcIntegration;
