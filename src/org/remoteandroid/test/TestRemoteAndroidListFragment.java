@@ -185,6 +185,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		Log.v(TAG,"Fragment.onCreate");
         super.onCreate(savedInstanceState);
 mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer        
+		mDiscoveredAndroid=RemoteAndroidManager.newDiscoveredAndroid(getActivity(),this);
         Intent market=RemoteAndroidManager.getIntentForMarket(getActivity());
         if (market==null)
         {
@@ -196,7 +197,6 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 				public void bind(RemoteAndroidManager manager)
 				{
 					mManager=manager;
-					mDiscoveredAndroid=mManager.newDiscoveredAndroid(TestRemoteAndroidListFragment.this);
 				}
 
 				@Override
@@ -383,12 +383,12 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 
 				SharedPreferences preferences=mPreferences;
 				int flags=Integer.parseInt(preferences.getString("discover.mode","1"));
-				mDiscoveredAndroid.start(flags,RemoteAndroidManager.DISCOVER_INFINITELY);
+				mManager.startDiscover(flags,RemoteAndroidManager.DISCOVER_INFINITELY);
 				mIsDiscover=true;
 			}
 			else
 			{
-				mDiscoveredAndroid.cancel();
+				mManager.cancelDiscover();
 				mIsDiscover=false;
 			}
 		}

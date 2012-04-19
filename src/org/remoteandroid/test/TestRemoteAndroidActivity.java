@@ -8,11 +8,6 @@ import org.remoteandroid.RemoteAndroidInfo;
 import org.remoteandroid.RemoteAndroidManager;
 import org.remoteandroid.tools.NfcSherlockFragmentActivity;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -31,22 +26,14 @@ import com.actionbarsherlock.view.Window;
 // Checkbox pour la découverte des ProximityNetwork
 public class TestRemoteAndroidActivity extends NfcSherlockFragmentActivity
 {
-	public static final String		TAG				= "RA-Test";
+	public static final String		TAG		= "RA-Test";
 
-	SharedPreferences				mPreferences;
+	private FragmentManager					mFragmentManager;
 
-	FragmentManager					mFragmentManager;
-
-	TestRemoteAndroidListFragment	mFragment;
+	private TestRemoteAndroidListFragment	mFragment;
 	
-	ImageView						mQrCode;
-	boolean							mQrCodeBig;
-
-//	@Override
-//	public void onBackPressed()
-//	{
-//		finish();
-//	}
+	private ImageView						mQrCode;
+	private boolean							mQrCodeBig;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -62,7 +49,7 @@ public class TestRemoteAndroidActivity extends NfcSherlockFragmentActivity
 		ab.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 		ab.setDisplayShowTitleEnabled(true);
 		mQrCode=(ImageView)findViewById(R.id.qrcode);
-		mQrCode.setVisibility(View.GONE);
+		//mQrCode.setVisibility(View.GONE);
 		mQrCode.setOnClickListener(new ImageView.OnClickListener()
 		{
 			
@@ -115,12 +102,6 @@ public class TestRemoteAndroidActivity extends NfcSherlockFragmentActivity
 				.findFragmentById(R.id.fragment);
 	}
 
-
-	@Override
-	protected void onPause()
-	{
-		super.onPause();
-	}
 	@Override
 	protected RemoteAndroidManager getRemoteAndroidManager()
 	{

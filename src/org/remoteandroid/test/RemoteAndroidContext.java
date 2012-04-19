@@ -125,9 +125,9 @@ public class RemoteAndroidContext
 				@Override
 				public void onFinish(int status)
 				{
-					if (status==-2)
+					if (status==RemoteAndroid.ERROR_INSTALL_REFUSE_FOR_UNKNOW_SOURCE)
 						setStatus("Impossible to install application not from market");
-					else if (status==-1)
+					else if (status==RemoteAndroid.ERROR_INSTALL_REFUSED)
 						setStatus("Install refused");
 					else if (status==0)
 						setStatus("Install not necessary");
