@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="app_name">Remote Test</string>
+    <string name="app_name">RA Test</string>
     <string name="sub_title">Use remote android API</string>
     <string name="discover">Discover</string>
     <string name="add">Add</string>
