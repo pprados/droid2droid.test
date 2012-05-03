@@ -49,7 +49,7 @@ public class TestRemoteAndroidActivity extends NfcSherlockFragmentActivity
 		ab.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 		ab.setDisplayShowTitleEnabled(true);
 		mQrCode=(ImageView)findViewById(R.id.qrcode);
-		//mQrCode.setVisibility(View.GONE);
+		mQrCode.setVisibility(View.GONE);
 		mQrCode.setOnClickListener(new ImageView.OnClickListener()
 		{
 			
@@ -100,12 +100,6 @@ public class TestRemoteAndroidActivity extends NfcSherlockFragmentActivity
 		mFragmentManager = getSupportFragmentManager();
 		mFragment = (TestRemoteAndroidListFragment) mFragmentManager
 				.findFragmentById(R.id.fragment);
-	}
-
-	@Override
-	protected RemoteAndroidManager getRemoteAndroidManager()
-	{
-		return mFragment.getRemoteAndroidManager();
 	}
 
 	@Override

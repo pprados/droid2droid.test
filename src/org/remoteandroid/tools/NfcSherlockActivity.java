@@ -46,6 +46,5 @@ implements RemoteAndroidNfcHelper.OnNfcDiscover
 		super.onPause();
 		mNfcIntegration.onPause(this);
 	}
-	protected abstract RemoteAndroidManager getRemoteAndroidManager();
 	public abstract void onNfcDiscover(RemoteAndroidInfo info);
 }
