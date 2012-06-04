@@ -403,7 +403,7 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 //			intent.putExtra(RemoteAndroidManager.EXTRA_TITLE, "TEST");
 			intent.putExtra(RemoteAndroidManager.EXTRA_SUBTITLE, "Select device.");
 			SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
-			int flags=Integer.parseInt(preferences.getString("remote_bind.flags","0"));
+			int flags=RemoteAndroidContext.parseFlags(preferences.getString("remote_bind.flags","0"));
 			intent.putExtra(RemoteAndroidManager.EXTRA_FLAGS, flags);
 			
 			startActivityForResult(intent, REQUEST_CONNECT_CODE);

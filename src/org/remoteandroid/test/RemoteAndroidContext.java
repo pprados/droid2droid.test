@@ -65,7 +65,7 @@ public class RemoteAndroidContext
 		String uri=mUri.substring(mUri.indexOf("] ")+2);
 		mState=State.BindingRemoteAndroid;
 		SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(context.getBaseContext());
-		int flags=Integer.parseInt(preferences.getString("remote_bind.flags","0"));
+		int flags=parseFlags(preferences.getString("remote_bind.flags","0"));
 		Intent intent=new Intent(Intent.ACTION_MAIN,Uri.parse(uri));
 		mManager.bindRemoteAndroid(
 				intent, 
@@ -109,7 +109,7 @@ public class RemoteAndroidContext
 		setStatus("Installing...");
 		SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(context.getBaseContext());
 		int timeout=Integer.parseInt(preferences.getString("install.timeout", "60")); // Seconds
-		int flags=Integer.parseInt(preferences.getString("install.flags","0"));
+		int flags=parseFlags(preferences.getString("install.flags","0"));
 		mState=State.InstallingApk;
 		try
 		{
@@ -169,7 +169,7 @@ public class RemoteAndroidContext
 		setStatus("Binding...");
 		mState=State.BindingRemoteObject;
 		SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(context.getBaseContext());
-		int flags=Integer.parseInt(preferences.getString("bind.flags","1"));
+		int flags=parseFlags(preferences.getString("bind.flags","1"));
 		Intent intent=new Intent("org.remoteandroid.test.TestService");
 		boolean rc=mRemoteAndroid.bindService(
 				intent,
@@ -232,4 +232,16 @@ public class RemoteAndroidContext
 		
 	}
 
+	public static int parseFlags(String flags)
+	{
+		int result=0;
+		if (flags.length()==0)
+			return 0;
+		String[] vals=flags.split("\\|");
+		for (int i=0;i<vals.length;++i)
+		{
+			result+=Integer.parseInt(vals[i]);
+		}
+		return result;
+	}
 }

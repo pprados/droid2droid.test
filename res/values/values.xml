@@ -1,43 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="install_values">
-    	<item>Normal</item>
+    <string-array name="install_codes">
     	<item>Reinstall</item>
     </string-array>
-    <string-array name="install_codes">
-    	<item>0</item>
+    <string-array name="install_values">
     	<item>2</item>
     </string-array>
 
-    <string-array name="bind_values">
-    	<item>Normal</item>
-    	<item>Auto create</item>
-    	<item>Debug</item>
-    	<item>Full</item>
-    </string-array>
     <string-array name="bind_codes">
-    	<item>0</item>
+    	<item>Auto create</item>
+    	<item>Debug unbound</item>
+    	<item>Not foreground</item>
+    	<item>Above client</item>
+    	<item>Waive priority</item>
+    	<item>Allow OOM</item>
+    	<item>Important</item>
+    	<item>Adjust with prio</item>
+    </string-array>
+    <string-array name="bind_values">
     	<item>1</item>
     	<item>2</item>
-    	<item>3</item>
+    	<item>4</item>
+    	<item>8</item>
+    	<item>16</item>
+    	<item>32</item>
+    	<item>64</item>
+    	<item>128</item>
     </string-array>
 
-    <string-array name="remote_bind_values">
-    	<item>Normal</item>
-    	<item>Propose pairing</item>
-    </string-array>
-    <string-array name="remote_bind_codes">
-    	<item>0</item>
-    	<item>1</item>
-   	</string-array>
-    
-    <string-array name="discover_values">
+	<string-array name="remote_bind_codes">
+	    <item>Propose pairing</item>
+		<item>Accept anonymous</item>
+	</string-array>
+	<string-array name="remote_bind_values">
+	    <item>1</item>
+		<item>2</item>
+	</string-array>    
+	
+	
+    <string-array name="discover_codes">
     	<item>Binded</item>
     	<item>Accept Anonymous</item>
     	<item>No bluetooth</item>
     	<item>No ethernet</item>
     </string-array>
-    <string-array name="discover_codes">
+    <string-array name="discover_values">
     	<item>0</item>
     	<item>2</item>
     	<item>4</item>
@@ -45,10 +52,10 @@
    	</string-array>
 
     
-    <string-array name="applicationcontext_values">
+    <string-array name="applicationcontext_codes">
     	<item>Normal</item>
     </string-array>
-    <string-array name="applicationcontext_codes">
+    <string-array name="applicationcontext_values">
     	<item>0</item>
     </string-array>
 </resources>

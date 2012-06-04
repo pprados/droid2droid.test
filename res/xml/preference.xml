@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen 
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:multi="http://schemas.android.com/apk/res/org.remoteandroid.test"
+    >
 
     <EditTextPreference
         android:defaultValue="0"
         android:dialogTitle="Number of android"
         android:key="init.androids"
         android:persistent="true"
-        android:summary="Number of initial androids to connect."
+        android:summary="Number of initial remote androids to connect."
         android:title="Number of androids" />
-    <EditTextPreference
-        android:defaultValue="60"
-        android:dialogTitle="Timeout to install"
-        android:key="install.timeout"
-        android:persistent="true"
-        android:summary="Delay to try to install an apk."
-        android:title="Timeout install" />
     <EditTextPreference
         android:defaultValue="60"
         android:dialogTitle="Timeout to execute"
@@ -23,40 +19,54 @@
         android:summary="Delay to execute a remote method."
         android:title="Timeout execute" />
 
-    <ListPreference
-        android:defaultValue="0"
-        android:dialogTitle="Enter flag value"
-        android:entries="@array/install_values"
-        android:entryValues="@array/install_codes"
-        android:key="install.flags"
+    <EditTextPreference
+        android:defaultValue="60"
+        android:dialogTitle="Timeout to install"
+        android:key="install.timeout"
         android:persistent="true"
-        android:summary="Force install an apk ?"
-        android:title="Flag for install" />
-    <ListPreference
-        android:defaultValue="1"
+        android:summary="Delay to try to install an apk."
+        android:title="Timeout install" />
+    <org.remoteandroid.tools.ListPreferenceMultiSelect 
+	    multi:checkAll="check" 
+	    multi:separator="|"
+	    android:defaultValue="1"
+        android:entries="@array/discover_codes"
+        android:entryValues="@array/discover_values"
         android:dialogTitle="Enter flag value"
-        android:entries="@array/bind_values"
-        android:entryValues="@array/bind_codes"
-        android:key="bind.flags"
-        android:summary="Use for bind remote service"
-        android:title="Flag for bind" />
-    <ListPreference
-        android:defaultValue="0"
-        android:dialogTitle="Enter flag value"
-        android:entries="@array/remote_bind_values"
-        android:entryValues="@array/remote_bind_codes"
-        android:key="remote_bind.flags"
-        android:summary="Use for bind remote android"
-        android:title="Flag for remote binding" />
-    <ListPreference
-        android:defaultValue="1"
-        android:dialogTitle="Enter flag value"
-        android:entries="@array/discover_values"
-        android:entryValues="@array/discover_codes"
         android:key="discover.mode"
         android:summary="Binded, Anonymous,no bluetooth, no ethernet"
         android:title="Discover mode" />
-
+	<org.remoteandroid.tools.ListPreferenceMultiSelect 
+	    multi:checkAll="check" 
+	    multi:separator="|"
+	    android:defaultValue="0"
+	    android:key="remote_bind.flags"
+	    android:title="Flag for remote binding" 
+	    android:dialogTitle="Enter flag value"
+	    android:summary="Use for bind remote android"
+	    android:entries="@array/remote_bind_codes"
+	    android:entryValues="@array/remote_bind_values"/>
+    <org.remoteandroid.tools.ListPreferenceMultiSelect 
+	    multi:checkAll="check" 
+	    multi:separator="|"
+        android:defaultValue="0"
+        android:entries="@array/install_codes"
+        android:entryValues="@array/install_values"
+        android:key="install.flags"
+        android:dialogTitle="Enter flag value"
+        android:persistent="true"
+        android:summary="Force install an apk ?"
+        android:title="Flag for install" />
+	<org.remoteandroid.tools.ListPreferenceMultiSelect 
+	    multi:checkAll="check" 
+	    multi:separator="|"
+	    android:defaultValue="1"
+        android:entries="@array/bind_codes"
+        android:entryValues="@array/bind_values"
+        android:key="bind.flags"
+        android:dialogTitle="Enter flag value"
+        android:summary="Use for bind remote service"
+        android:title="Flag for bind" />
     <!-- <ListPreference -->
     <!-- android:key="applicationcontext.flags" -->
     <!-- android:title="Flag for bind application context" -->
