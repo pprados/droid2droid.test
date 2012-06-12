@@ -3,9 +3,8 @@ package org.remoteandroid.test;
 import java.io.IOException;
 
 import org.remoteandroid.RemoteAndroid;
-import org.remoteandroid.RemoteAndroidManager;
 import org.remoteandroid.RemoteAndroid.PublishListener;
-import org.remoteandroid.internal.RemoteAndroidManagerImpl;
+import org.remoteandroid.RemoteAndroidManager;
 
 import android.app.Activity;
 import android.content.ComponentName;
