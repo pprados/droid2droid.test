@@ -30,26 +30,30 @@
 
 	<string-array name="remote_bind_codes">
 	    <item>Propose pairing</item>
-		<item>Accept anonymous</item>
+	    <item>Force pairing</item>
+	    <item>Remove pairing</item>
 	</string-array>
 	<string-array name="remote_bind_values">
 	    <item>1</item>
 		<item>2</item>
+		<item>4</item>
 	</string-array>    
 	
 	
     <string-array name="discover_codes">
-    	<item>Binded</item>
     	<item>Accept Anonymous</item>
+	    <item>Propose pairing</item>
+	    <item>Force pairing</item>
     	<item>No bluetooth</item>
     	<item>No ethernet</item>
     </string-array>
     <string-array name="discover_values">
-    	<item>0</item>
-    	<item>2</item>
-    	<item>4</item>
     	<item>8</item>
-   	</string-array>
+	    <item>1</item>
+		<item>2</item>
+    	<item>16</item>
+    	<item>32</item>
+    </string-array>
 
     
     <string-array name="applicationcontext_codes">

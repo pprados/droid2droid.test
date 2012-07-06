@@ -56,18 +56,18 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 
 	private static final int REQUEST_CONNECT_CODE=1;
 	
-    private ExecutorService mExecutors=Executors.newCachedThreadPool();
-	private Handler mHandler=new Handler();
+    private final ExecutorService mExecutors=Executors.newCachedThreadPool();
+	private final Handler mHandler=new Handler();
 	SharedPreferences mPreferences;
 	MenuItem mDiscoverMenu;
 	MenuItem mBurstMenu;
 	
 	boolean mIsDiscover;
 
-	private List<String> mItems=new ArrayList<String>();
+	private final List<String> mItems=new ArrayList<String>();
 
 	private volatile ListRemoteAndroidInfo mDiscoveredAndroid;
-	private ArrayList<RemoteAndroidContext> mRemoteAndroids=new ArrayList<RemoteAndroidContext>(5);
+	private final ArrayList<RemoteAndroidContext> mRemoteAndroids=new ArrayList<RemoteAndroidContext>(5);
 	private BaseAdapter mAdapter;
 	private ArrayAdapter<String> mItemAdapter;
 	private boolean mBurst;
@@ -76,7 +76,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	@Override
 	public void onDiscoverStart()
 	{
-		FragmentActivity activity=(FragmentActivity)getActivity();
+		FragmentActivity activity=getActivity();
 		if (activity!=null)
 		{
 			setDiscover(true);
@@ -85,7 +85,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	@Override
 	public void onDiscoverStop()
 	{
-		FragmentActivity activity=(FragmentActivity)getActivity();
+		FragmentActivity activity=getActivity();
 		if (activity!=null)
 		{
 			setDiscover(false);
@@ -403,7 +403,7 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 //			intent.putExtra(RemoteAndroidManager.EXTRA_TITLE, "TEST");
 			intent.putExtra(RemoteAndroidManager.EXTRA_SUBTITLE, "Select device.");
 			SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
-			int flags=RemoteAndroidContext.parseFlags(preferences.getString("remote_bind.flags","0"));
+			int flags=RemoteAndroidContext.parseFlags(preferences.getString("discover.mode","1"));
 			intent.putExtra(RemoteAndroidManager.EXTRA_FLAGS, flags);
 			
 			startActivityForResult(intent, REQUEST_CONNECT_CODE);

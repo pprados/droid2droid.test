@@ -2,20 +2,11 @@ package org.remoteandroid.tools;
 
 import org.remoteandroid.RemoteAndroidInfo;
 import org.remoteandroid.RemoteAndroidManager;
-import org.remoteandroid.test.TestRemoteAndroidActivity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.os.Build;
-import android.os.Bundle;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 public abstract class NfcMarketSherlockFragmentActivity extends NfcSherlockFragmentActivity
 {
@@ -42,7 +33,7 @@ public abstract class NfcMarketSherlockFragmentActivity extends NfcSherlockFragm
 		{
 			case DIALOG_MARKET:
 				return new AlertDialog.Builder(this)
-						.setMessage("Install the application Remote Android ?")
+						.setMessage("Install the application RemoteAndroid ?") // FIXME
 						.setPositiveButton("Install", new DialogInterface.OnClickListener()
 						{
 
@@ -68,5 +59,6 @@ public abstract class NfcMarketSherlockFragmentActivity extends NfcSherlockFragm
 	}
 
 	protected abstract RemoteAndroidManager getRemoteAndroidManager();
+	@Override
 	public abstract void onNfcDiscover(RemoteAndroidInfo info);
 }
