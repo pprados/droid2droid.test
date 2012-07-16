@@ -14,6 +14,7 @@ implements RemoteAndroidNfcHelper.OnNfcDiscover
 {
 	protected RemoteAndroidNfcHelper 		mNfcIntegration;
 	
+// FIXME
 //	@Override
 //	protected void onNewIntent(Intent intent)
 //	{
@@ -46,5 +47,6 @@ implements RemoteAndroidNfcHelper.OnNfcDiscover
 		super.onPause();
 		mNfcIntegration.onPause(this);
 	}
+	@Override
 	public abstract void onNfcDiscover(RemoteAndroidInfo info);
 }

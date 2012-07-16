@@ -161,7 +161,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		Spinner mUri;
 		ToggleButton mActive;
 		Button mInstall;
-		Button mBind;
+		ToggleButton mBind;
 		Button mInvoke;
 		Spinner mCmds;
 		TextView mStatus;
@@ -241,7 +241,7 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
     					caches.mActive.setOnClickListener(TestRemoteAndroidListFragment.this);
     					caches.mInstall=(Button)view.findViewById(R.id.install);
     					caches.mInstall.setOnClickListener(TestRemoteAndroidListFragment.this);
-    					caches.mBind=(Button)view.findViewById(R.id.bind);
+    					caches.mBind=(ToggleButton)view.findViewById(R.id.bind);
     					caches.mBind.setOnClickListener(TestRemoteAndroidListFragment.this);
     					caches.mInvoke=(Button)view.findViewById(R.id.invoke);
     					caches.mInvoke.setOnClickListener(TestRemoteAndroidListFragment.this);
@@ -522,13 +522,21 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 							@Override
 							public void run()
 							{
-								ra.bindService(getActivity());
+								if (!((ToggleButton)view).isChecked())
+									context.unbindService(getActivity());
+								else
+									context.bindService(getActivity());
 							}
 						});
 					}					
 				}
 				else
-					context.bindService(getActivity());
+				{
+					if (!((ToggleButton)view).isChecked())
+						context.unbindService(getActivity());
+					else
+						context.bindService(getActivity());
+				}
 				break;
 				
 			case R.id.invoke:

@@ -32,10 +32,11 @@ public class RemoteAndroidContext
 	
 	OnRemoteAndroidContextUpdated mCallback;
 	String mUri;
-	enum State { Idle,BindingRemoteAndroid,InstallingApk,BindingRemoteObject,BindApplicationContext};
+	enum State { Idle,BindingRemoteAndroid,InstallingApk,BindingRemoteObject,UnbindingRemoteObject,BindApplicationContext};
 	State mState=State.Idle;
 	
 	RemoteAndroidManager mManager;
+	ServiceConnection  mConn;
 	RemoteAndroid mRemoteAndroid;
 	TestRemoteObject mRemoteObject;
 	
@@ -170,32 +171,43 @@ public class RemoteAndroidContext
 		SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(context.getBaseContext());
 		int flags=parseFlags(preferences.getString("bind.flags","1"));
 		Intent intent=new Intent("org.remoteandroid.test.TestService");
-		boolean rc=mRemoteAndroid.bindService(
-				intent,
-				new ServiceConnection()
-				{
-					
-					@Override
-					public void onServiceDisconnected(ComponentName name)
-					{
-						mState=State.Idle;
-						mRemoteObject=null;
-						setStatus("Binding disconnected");
-					}
-					
-					@Override
-					public void onServiceConnected(ComponentName name, IBinder service)
-					{
-						mState=State.Idle;
-						mRemoteObject=(TestRemoteObject)TestRemoteObject.Stub.asInterface(service);
-						setStatus("Remote object binded");
-					}
-				}, flags);
+		mConn=new ServiceConnection()
+		{
+			
+			@Override
+			public void onServiceDisconnected(ComponentName name)
+			{
+				mState=State.Idle;
+				mRemoteObject=null;
+				setStatus("Binding disconnected");
+			}
+			
+			@Override
+			public void onServiceConnected(ComponentName name, IBinder service)
+			{
+				mState=State.Idle;
+				mRemoteObject=TestRemoteObject.Stub.asInterface(service);
+				setStatus("Remote object binded");
+			}
+		};
+		boolean rc=mRemoteAndroid.bindService(intent,mConn, flags);
 		if (rc==false)
 			setStatus("Bind impossible");
 			
 	}
 
+	public void unbindService(Activity context)
+	{
+		if (mRemoteAndroid==null)
+			return;
+		setStatus("Unbinding...");
+		mState=State.UnbindingRemoteObject;
+		boolean rc=mRemoteAndroid.unbindService(mConn);
+		if (rc==false)
+			setStatus("Unbind impossible");
+		else
+			setStatus("Unbinded.");
+	}
 	public void invoke(Context context)
 	{
 		if (mRemoteAndroid==null)

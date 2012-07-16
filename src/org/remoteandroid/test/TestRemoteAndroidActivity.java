@@ -8,6 +8,7 @@ import org.remoteandroid.RemoteAndroidInfo;
 import org.remoteandroid.RemoteAndroidManager;
 import org.remoteandroid.tools.NfcSherlockFragmentActivity;
 
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -35,6 +36,7 @@ public class TestRemoteAndroidActivity extends NfcSherlockFragmentActivity
 	private ImageView						mQrCode;
 	private boolean							mQrCodeBig;
 
+	@TargetApi(11)
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
