@@ -1,6 +1,5 @@
 package org.remoteandroid.tools;
 
-import org.remoteandroid.RemoteAndroidInfo;
 import org.remoteandroid.RemoteAndroidManager;
 
 import android.app.AlertDialog;
@@ -8,7 +7,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 
-public abstract class NfcMarketSherlockFragmentActivity extends NfcSherlockFragmentActivity
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
+public abstract class MarketSherlockFragmentActivity extends SherlockFragmentActivity
 {
 	private static final int		DIALOG_MARKET	= -1;
 
@@ -40,7 +41,7 @@ public abstract class NfcMarketSherlockFragmentActivity extends NfcSherlockFragm
 							@Override
 							public void onClick(DialogInterface paramDialogInterface, int paramInt)
 							{
-								Intent intent=RemoteAndroidManager.getIntentForMarket(NfcMarketSherlockFragmentActivity.this);
+								Intent intent=RemoteAndroidManager.getIntentForMarket(MarketSherlockFragmentActivity.this);
 								startActivity(intent);
 								finish();
 							}
@@ -59,6 +60,4 @@ public abstract class NfcMarketSherlockFragmentActivity extends NfcSherlockFragm
 	}
 
 	protected abstract RemoteAndroidManager getRemoteAndroidManager();
-	@Override
-	public abstract void onNfcDiscover(RemoteAndroidInfo info);
 }

@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.remoteandroid.R;
-import org.remoteandroid.RemoteAndroidInfo;
 import org.remoteandroid.RemoteAndroidManager;
-import org.remoteandroid.tools.NfcSherlockFragmentActivity;
+import org.remoteandroid.tools.MarketSherlockFragmentActivity;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
@@ -25,16 +24,16 @@ import com.actionbarsherlock.view.Window;
 // TODO: Manque l'affichage de l'action bar
 
 // Checkbox pour la découverte des ProximityNetwork
-public class TestRemoteAndroidActivity extends NfcSherlockFragmentActivity
+public class TestRemoteAndroidActivity extends MarketSherlockFragmentActivity
 {
-	public static final String		TAG		= "RA-Test";
+	public static final String	TAG		= "RA-Test";
 
 	private FragmentManager					mFragmentManager;
 
 	private TestRemoteAndroidListFragment	mFragment;
 	
 	private ImageView						mQrCode;
-	private boolean							mQrCodeBig;
+	private boolean						mQrCodeBig;
 
 	@TargetApi(11)
 	@Override
@@ -103,10 +102,9 @@ public class TestRemoteAndroidActivity extends NfcSherlockFragmentActivity
 		mFragment = (TestRemoteAndroidListFragment) mFragmentManager
 				.findFragmentById(R.id.fragment);
 	}
-
 	@Override
-	public void onNfcDiscover(RemoteAndroidInfo info)
+	protected RemoteAndroidManager getRemoteAndroidManager()
 	{
-		mFragment.onDiscover(info, false);
+		return mFragment.getManager();
 	}
 }
