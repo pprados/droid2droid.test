@@ -12,10 +12,16 @@ import org.remoteandroid.RemoteAndroidManager;
 import org.remoteandroid.RemoteAndroidManager.ManagerListener;
 import org.remoteandroid.test.RemoteAndroidContext.OnRemoteAndroidContextUpdated;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcAdapter.CreateNdefMessageCallback;
+import android.nfc.NfcEvent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -45,7 +51,8 @@ import com.actionbarsherlock.view.MenuItem;
 // Checkbox pour la découverte des ProximityNetwork
 public class TestRemoteAndroidListFragment extends SherlockListFragment 
 implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextUpdated, OnCheckedChangeListener,
-	ListRemoteAndroidInfo.DiscoverListener
+	ListRemoteAndroidInfo.DiscoverListener,
+	CreateNdefMessageCallback
 {
 	public static final String TAG="RA-Test";
 	
@@ -56,13 +63,14 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 
 	private static final int REQUEST_CONNECT_CODE=1;
 	
+	private NfcAdapter mNfcAdapter;
     private final ExecutorService mExecutors=Executors.newCachedThreadPool();
 	private final Handler mHandler=new Handler();
-	SharedPreferences mPreferences;
-	MenuItem mDiscoverMenu;
-	MenuItem mBurstMenu;
+	private SharedPreferences mPreferences;
+	private MenuItem mDiscoverMenu;
+	private MenuItem mBurstMenu;
 	
-	boolean mIsDiscover;
+	private boolean mIsDiscover;
 
 	private final List<String> mItems=new ArrayList<String>();
 
@@ -73,6 +81,22 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	private boolean mBurst;
 	private RemoteAndroidManager mManager;
 	
+	@Override
+	@TargetApi(14)
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+		if (Build.VERSION.SDK_INT>Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+		{
+			mNfcAdapter=NfcAdapter.getDefaultAdapter(activity);
+			mNfcAdapter.setNdefPushMessageCallback(this, activity);
+		}
+	}
+	
+	public final RemoteAndroidManager getManager()
+	{
+		return mManager;
+	}
 	@Override
 	public void onDiscoverStart()
 	{
@@ -184,7 +208,6 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     {
 		Log.v(TAG,"Fragment.onCreate");
         super.onCreate(savedInstanceState);
-mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer        
 		mDiscoveredAndroid=RemoteAndroidManager.newDiscoveredAndroid(getActivity(),this);
         Intent market=RemoteAndroidManager.getIntentForMarket(getActivity());
         if (market==null)
@@ -398,6 +421,7 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 //			intent.setFlags(
 //				Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
 //				|Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+//				|Intent.FLAG_
 //				);
 			intent.putExtra(RemoteAndroidManager.EXTRA_THEME_ID,android.R.style.Theme_Holo_Light_DarkActionBar);
 //			intent.putExtra(RemoteAndroidManager.EXTRA_TITLE, "TEST");
@@ -593,4 +617,10 @@ mItems.add("[hardcoded] ip://192.168.0.63"); // FIXME: a virer
 	{
 		return mManager;
 	}
+    @Override
+    @TargetApi(14)
+	public NdefMessage createNdefMessage(NfcEvent event) 
+	{
+		return (mManager!=null) ? mManager.createNdefMessage() : null;
+	}	
 }
