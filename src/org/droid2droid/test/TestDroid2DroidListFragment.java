@@ -1,4 +1,35 @@
-package org.remoteandroid.test;
+/******************************************************************************
+ *
+ * droid2droid - Distributed Android Framework
+ * ==========================================
+ *
+ * Copyright (C) 2012 by Atos (http://www.http://atos.net)
+ * http://www.droid2droid.org
+ *
+ ******************************************************************************
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+******************************************************************************/
+package org.droid2droid.test;
+
+import static org.droid2droid.Droid2DroidManager.ACTION_CONNECT_ANDROID;
+import static org.droid2droid.Droid2DroidManager.DISCOVER_INFINITELY;
+import static org.droid2droid.Droid2DroidManager.EXTRA_DISCOVER;
+import static org.droid2droid.Droid2DroidManager.EXTRA_FLAGS;
+import static org.droid2droid.Droid2DroidManager.EXTRA_SUBTITLE;
+import static org.droid2droid.Droid2DroidManager.EXTRA_THEME_ID;
+import static org.droid2droid.Droid2DroidManager.EXTRA_TITLE;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -6,11 +37,11 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.remoteandroid.ListRemoteAndroidInfo;
-import org.remoteandroid.RemoteAndroidInfo;
-import org.remoteandroid.RemoteAndroidManager;
-import org.remoteandroid.RemoteAndroidManager.ManagerListener;
-import org.remoteandroid.test.RemoteAndroidContext.OnRemoteAndroidContextUpdated;
+import org.droid2droid.Droid2DroidManager;
+import org.droid2droid.Droid2DroidManager.ManagerListener;
+import org.droid2droid.ListRemoteAndroidInfo;
+import org.droid2droid.RemoteAndroidInfo;
+import org.droid2droid.test.Droid2DroidContext.OnRemoteAndroidContextUpdated;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -21,7 +52,8 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
 import android.os.AsyncTask;
-import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -47,9 +79,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-
 // Checkbox pour la découverte des ProximityNetwork
-public class TestRemoteAndroidListFragment extends SherlockListFragment 
+public class TestDroid2DroidListFragment extends SherlockListFragment 
 implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextUpdated, OnCheckedChangeListener,
 	ListRemoteAndroidInfo.DiscoverListener,
 	CreateNdefMessageCallback
@@ -75,25 +106,25 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	private final List<String> mItems=new ArrayList<String>();
 
 	private volatile ListRemoteAndroidInfo mDiscoveredAndroid;
-	private final ArrayList<RemoteAndroidContext> mRemoteAndroids=new ArrayList<RemoteAndroidContext>(5);
+	private final ArrayList<Droid2DroidContext> mRemoteAndroids=new ArrayList<Droid2DroidContext>(5);
 	private BaseAdapter mAdapter;
 	private ArrayAdapter<String> mItemAdapter;
 	private boolean mBurst;
-	private RemoteAndroidManager mManager;
+	private Droid2DroidManager mManager;
 	
 	@Override
 	@TargetApi(14)
 	public void onAttach(Activity activity)
 	{
 		super.onAttach(activity);
-		if (Build.VERSION.SDK_INT>Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+		if (VERSION.SDK_INT>VERSION_CODES.ICE_CREAM_SANDWICH)
 		{
 			mNfcAdapter=NfcAdapter.getDefaultAdapter(activity);
 			mNfcAdapter.setNdefPushMessageCallback(this, activity);
 		}
 	}
 	
-	public final RemoteAndroidManager getManager()
+	public final Droid2DroidManager getManager()
 	{
 		return mManager;
 	}
@@ -143,9 +174,9 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		{
 			if (uris.length!=0)
 			{
-				mRemoteAndroids.add(new RemoteAndroidContext(getActivity(),mManager,this));
+				mRemoteAndroids.add(new Droid2DroidContext(getActivity(),mManager,this));
 		    	int position=mRemoteAndroids.size()-1;
-		    	RemoteAndroidContext racontext=mRemoteAndroids.get(position);
+		    	Droid2DroidContext racontext=mRemoteAndroids.get(position);
 		    	racontext.mUri='['+info.getName()+"] "+uris[0];
 			}
 			else
@@ -202,28 +233,28 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		super.onSaveInstanceState(outState);
 		outState.putBoolean(EXTRA_BURST, mBurst);
 	}
-	private static final long MAX_WAIT_MANAGER=5000L;
+
 	@Override
     public void onActivityCreated(Bundle savedInstanceState) 
     {
 		Log.v(TAG,"Fragment.onCreate");
         super.onCreate(savedInstanceState);
-		mDiscoveredAndroid=RemoteAndroidManager.newDiscoveredAndroid(getActivity(),this);
-        Intent market=RemoteAndroidManager.getIntentForMarket(getActivity());
+		mDiscoveredAndroid=Droid2DroidManager.newDiscoveredAndroid(getActivity(),this);
+        Intent market=Droid2DroidManager.getIntentForMarket(getActivity());
         if (market==null)
         {
 //	        mRetain=(Retain)getActivity().getLastNonConfigurationInstance(); // FIXME: single fragment in activity
-        	RemoteAndroidManager.bindManager(getActivity(), new ManagerListener()
+        	Droid2DroidManager.bindManager(getActivity(), new ManagerListener()
         	{
 
 				@Override
-				public void bind(RemoteAndroidManager manager)
+				public void bind(Droid2DroidManager manager)
 				{
 					mManager=manager;
 				}
 
 				@Override
-				public void unbind(RemoteAndroidManager manager)
+				public void unbind(Droid2DroidManager manager)
 				{
 					mDiscoveredAndroid=null;
     	        	setDiscover(false);
@@ -259,15 +290,15 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     					view=getActivity().getLayoutInflater().inflate(R.layout.test_item, null);
     					caches=new Caches();
     					caches.mUri=(Spinner)view.findViewById(R.id.uri);
-    					caches.mUri.setOnItemSelectedListener(TestRemoteAndroidListFragment.this);
+    					caches.mUri.setOnItemSelectedListener(TestDroid2DroidListFragment.this);
     					caches.mActive=(ToggleButton)view.findViewById(R.id.active);
-    					caches.mActive.setOnClickListener(TestRemoteAndroidListFragment.this);
+    					caches.mActive.setOnClickListener(TestDroid2DroidListFragment.this);
     					caches.mInstall=(Button)view.findViewById(R.id.install);
-    					caches.mInstall.setOnClickListener(TestRemoteAndroidListFragment.this);
+    					caches.mInstall.setOnClickListener(TestDroid2DroidListFragment.this);
     					caches.mBind=(ToggleButton)view.findViewById(R.id.bind);
-    					caches.mBind.setOnClickListener(TestRemoteAndroidListFragment.this);
+    					caches.mBind.setOnClickListener(TestDroid2DroidListFragment.this);
     					caches.mInvoke=(Button)view.findViewById(R.id.invoke);
-    					caches.mInvoke.setOnClickListener(TestRemoteAndroidListFragment.this);
+    					caches.mInvoke.setOnClickListener(TestDroid2DroidListFragment.this);
     					caches.mStatus=(TextView)view.findViewById(R.id.status);
     					view.setTag(caches);
     					
@@ -285,7 +316,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     				caches.mInstall.setTag(position);
     				caches.mBind.setTag(position);
     				caches.mInvoke.setTag(position);
-    				RemoteAndroidContext racontext=mRemoteAndroids.get(position);
+    				Droid2DroidContext racontext=mRemoteAndroids.get(position);
     				if (racontext.mUri!=null)
     				{
     					
@@ -298,7 +329,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     						}
     					}
     				}
-    				caches.mActive.setEnabled((racontext.mState!=RemoteAndroidContext.State.BindingRemoteAndroid));
+    				caches.mActive.setEnabled((racontext.mState!=Droid2DroidContext.State.BindingRemoteAndroid));
     				caches.mActive.setChecked(racontext.mRemoteAndroid!=null);
     				boolean enabled=(racontext.mRemoteAndroid!=null);
     				caches.mInstall.setEnabled(enabled);
@@ -372,7 +403,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     				{
     					for (int i=mRemoteAndroids.size();i<size;++i)
     					{
-    						RemoteAndroidContext context=new RemoteAndroidContext(getActivity(),mManager,TestRemoteAndroidListFragment.this);
+    						Droid2DroidContext context=new Droid2DroidContext(getActivity(),mManager,TestDroid2DroidListFragment.this);
     						context.mUri=(mItems.size()>0) ? mItems.get(0) : URL_NOT_KNOWN;
     						mRemoteAndroids.add(context);
     					}
@@ -406,7 +437,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 
 				SharedPreferences preferences=mPreferences;
 				int flags=Integer.parseInt(preferences.getString("discover.mode","1"));
-				mManager.startDiscover(flags,RemoteAndroidManager.DISCOVER_INFINITELY);
+				mManager.startDiscover(flags,DISCOVER_INFINITELY);
 				mIsDiscover=true;
 			}
 			else
@@ -417,18 +448,18 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		}
 		else if (id == R.id.add)
 		{
-			Intent intent=new Intent(RemoteAndroidManager.ACTION_CONNECT_ANDROID);
+			Intent intent=new Intent(ACTION_CONNECT_ANDROID);
 //			intent.setFlags(
 //				Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET
 //				|Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
 //				|Intent.FLAG_
 //				);
-			intent.putExtra(RemoteAndroidManager.EXTRA_THEME_ID,android.R.style.Theme_Holo_Light_DarkActionBar);
-//			intent.putExtra(RemoteAndroidManager.EXTRA_TITLE, "TEST");
-			intent.putExtra(RemoteAndroidManager.EXTRA_SUBTITLE, "Select device.");
+			intent.putExtra(EXTRA_THEME_ID,android.R.style.Theme_Holo_Light_DarkActionBar);
+			intent.putExtra(EXTRA_TITLE, "Test");
+			intent.putExtra(EXTRA_SUBTITLE, "Select device.");
 			SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
-			int flags=RemoteAndroidContext.parseFlags(preferences.getString("discover.mode","1"));
-			intent.putExtra(RemoteAndroidManager.EXTRA_FLAGS, flags);
+			int flags=Droid2DroidContext.parseFlags(preferences.getString("discover.mode","1"));
+			intent.putExtra(EXTRA_FLAGS, flags);
 			
 			startActivityForResult(intent, REQUEST_CONNECT_CODE);
 		}
@@ -437,7 +468,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 			if (mDiscoveredAndroid!=null)
 			{
 				mDiscoveredAndroid.clear();
-				for (final RemoteAndroidContext rac:mRemoteAndroids)
+				for (final Droid2DroidContext rac:mRemoteAndroids)
 				{
 					if (rac.mRemoteAndroid!=null) 
 					{
@@ -463,7 +494,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		}
 		else if (id == R.id.config)
 		{
-			getActivity().startActivity(new Intent(getActivity(), TestRemoteAndroidPreferenceActivity.class));
+			getActivity().startActivity(new Intent(getActivity(), TestDroid2DroidPreferenceActivity.class));
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -474,7 +505,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		if (requestCode==REQUEST_CONNECT_CODE && resultCode==Activity.RESULT_OK)
 		{
 			
-			RemoteAndroidInfo info=(RemoteAndroidInfo)data.getParcelableExtra(RemoteAndroidManager.EXTRA_DISCOVER);
+			RemoteAndroidInfo info=(RemoteAndroidInfo)data.getParcelableExtra(EXTRA_DISCOVER);
 			addRemoteAndroid(info, false);
 		}
 	}
@@ -482,7 +513,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	public void onClick(final View view)
 	{
 		final int position=(Integer)view.getTag();
-		final RemoteAndroidContext context=mRemoteAndroids.get(position);
+		final Droid2DroidContext context=mRemoteAndroids.get(position);
 		switch (view.getId())
 		{
 			case R.id.active:
@@ -490,7 +521,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				view.setEnabled(false);
 				if (mBurst)
 				{
-					for (final RemoteAndroidContext ra:mRemoteAndroids)
+					for (final Droid2DroidContext ra:mRemoteAndroids)
 					{
 						mExecutors.execute(new Runnable()
 						{
@@ -526,7 +557,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				Log.d(TAG,"Install "+position);
 				if (mBurst)
 				{
-					for (RemoteAndroidContext ra:mRemoteAndroids) // FIXME Install en mode burst
+					for (Droid2DroidContext ra:mRemoteAndroids) // FIXME Install en mode burst
 					{
 						ra.install(getActivity());
 					}					
@@ -539,7 +570,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				Log.d(TAG,"Invoke "+position);
 				if (mBurst)
 				{
-					for (final RemoteAndroidContext ra:mRemoteAndroids)
+					for (final Droid2DroidContext ra:mRemoteAndroids) // FIXME
 					{
 						mExecutors.execute(new Runnable()
 						{
@@ -567,7 +598,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				Log.d(TAG,"Invoke "+position);
 				if (mBurst)
 				{
-					for (final RemoteAndroidContext ra:mRemoteAndroids)
+					for (final Droid2DroidContext ra:mRemoteAndroids)
 					{
 						mExecutors.execute(new Runnable()
 						{
@@ -588,7 +619,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	public void onItemSelected(AdapterView<?> parent, View view, int itemPosition, long id)
 	{
 		final int position=(Integer)parent.getTag();
-		RemoteAndroidContext context=mRemoteAndroids.get(position);
+		Droid2DroidContext context=mRemoteAndroids.get(position);
 		context.mUri=mItems.get(itemPosition);
 	}
 	@Override
@@ -613,7 +644,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 	{
 	}
-	public final RemoteAndroidManager getRemoteAndroidManager()
+	public final Droid2DroidManager getRemoteAndroidManager()
 	{
 		return mManager;
 	}

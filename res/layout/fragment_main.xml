@@ -14,7 +14,7 @@
 
         <fragment
             android:id="@+id/fragment"
-            android:name="org.remoteandroid.test.TestRemoteAndroidListFragment"
+            android:name="org.droid2droid.test.TestDroid2DroidListFragment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             tools:layout="@layout/test_item" >

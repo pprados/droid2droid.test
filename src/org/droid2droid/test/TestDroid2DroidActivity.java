@@ -1,16 +1,41 @@
-package org.remoteandroid.test;
+/******************************************************************************
+ *
+ * droid2droid - Distributed Android Framework
+ * ==========================================
+ *
+ * Copyright (C) 2012 by Atos (http://www.http://atos.net)
+ * http://www.droid2droid.org
+ *
+ ******************************************************************************
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+******************************************************************************/
+package org.droid2droid.test;
+
+import static org.droid2droid.Droid2DroidManager.QRCODE_URI;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.remoteandroid.R;
-import org.remoteandroid.RemoteAndroidManager;
-import org.remoteandroid.tools.MarketSherlockFragmentActivity;
+import org.droid2droid.Droid2DroidManager;
+import org.droid2droid.tools.MarketSherlockFragmentActivity;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
@@ -24,13 +49,13 @@ import com.actionbarsherlock.view.Window;
 // TODO: Manque l'affichage de l'action bar
 
 // Checkbox pour la découverte des ProximityNetwork
-public class TestRemoteAndroidActivity extends MarketSherlockFragmentActivity
+public class TestDroid2DroidActivity extends MarketSherlockFragmentActivity
 {
 	public static final String	TAG		= "RA-Test";
 
 	private FragmentManager					mFragmentManager;
 
-	private TestRemoteAndroidListFragment	mFragment;
+	private TestDroid2DroidListFragment	mFragment;
 	
 	private ImageView						mQrCode;
 	private boolean						mQrCodeBig;
@@ -76,15 +101,15 @@ public class TestRemoteAndroidActivity extends MarketSherlockFragmentActivity
 		{
 			Bitmap bitmap;
 			InputStream in;
-			if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)
+			if (VERSION.SDK_INT>=VERSION_CODES.HONEYCOMB)
 			{
 				in=getContentResolver()
-						.openTypedAssetFileDescriptor(RemoteAndroidManager.QRCODE_URI, "image/png", null)
+						.openTypedAssetFileDescriptor(QRCODE_URI, "image/png", null)
 						.createInputStream();
 			}
 			else
 			{
-				in=getContentResolver().openInputStream(RemoteAndroidManager.QRCODE_URI);
+				in=getContentResolver().openInputStream(QRCODE_URI);
 			}
 			bitmap=BitmapFactory.decodeStream(in);
 			in.close();
@@ -99,11 +124,11 @@ public class TestRemoteAndroidActivity extends MarketSherlockFragmentActivity
 			e.printStackTrace();
 		}
 		mFragmentManager = getSupportFragmentManager();
-		mFragment = (TestRemoteAndroidListFragment) mFragmentManager
+		mFragment = (TestDroid2DroidListFragment) mFragmentManager
 				.findFragmentById(R.id.fragment);
 	}
 	@Override
-	protected RemoteAndroidManager getRemoteAndroidManager()
+	protected Droid2DroidManager getRemoteAndroidManager()
 	{
 		return mFragment.getManager();
 	}

@@ -1,10 +1,33 @@
-package org.remoteandroid.test;
+/******************************************************************************
+ *
+ * droid2droid - Distributed Android Framework
+ * ==========================================
+ *
+ * Copyright (C) 2012 by Atos (http://www.http://atos.net)
+ * http://www.droid2droid.org
+ *
+ ******************************************************************************
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+******************************************************************************/
+package org.droid2droid.test;
 
 import java.io.IOException;
 
-import org.remoteandroid.RemoteAndroid;
-import org.remoteandroid.RemoteAndroid.PublishListener;
-import org.remoteandroid.RemoteAndroidManager;
+import org.droid2droid.Droid2DroidManager;
+import org.droid2droid.RemoteAndroid;
+import org.droid2droid.RemoteAndroid.PublishListener;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -21,7 +44,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 
-public class RemoteAndroidContext
+public class Droid2DroidContext
 {	
 	interface OnRemoteAndroidContextUpdated
 	{
@@ -35,14 +58,14 @@ public class RemoteAndroidContext
 	enum State { Idle,BindingRemoteAndroid,InstallingApk,BindingRemoteObject,UnbindingRemoteObject,BindApplicationContext};
 	State mState=State.Idle;
 	
-	RemoteAndroidManager mManager;
+	Droid2DroidManager mManager;
 	ServiceConnection  mConn;
 	RemoteAndroid mRemoteAndroid;
 	TestRemoteObject mRemoteObject;
 	
 	CharSequence mStatus="idle";
 	
-	public RemoteAndroidContext(Context context,RemoteAndroidManager manager,OnRemoteAndroidContextUpdated callback)
+	public Droid2DroidContext(Context context,Droid2DroidManager manager,OnRemoteAndroidContextUpdated callback)
 	{
 		mCallback=callback;
 		mManager=manager;
@@ -170,7 +193,7 @@ public class RemoteAndroidContext
 		mState=State.BindingRemoteObject;
 		SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(context.getBaseContext());
 		int flags=parseFlags(preferences.getString("bind.flags","1"));
-		Intent intent=new Intent("org.remoteandroid.test.TestService");
+		Intent intent=new Intent("org.droid2droid.test.TestService");
 		mConn=new ServiceConnection()
 		{
 			
@@ -227,7 +250,7 @@ public class RemoteAndroidContext
 				}
 				catch (RemoteException e)
 				{
-					Log.e(TestRemoteAndroidActivity.TAG,"Error when invoke.",e);
+					Log.e(TestDroid2DroidActivity.TAG,"Error when invoke.",e);
 					return "ko"+e.getMessage();
 				}
 			}

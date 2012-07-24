@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen 
     xmlns:android="http://schemas.android.com/apk/res/android" 
-    xmlns:multi="http://schemas.android.com/apk/res/org.remoteandroid.test"
+    xmlns:multi="http://schemas.android.com/apk/res/org.droid2droid.test"
     >
 
     <EditTextPreference
@@ -26,7 +26,7 @@
         android:persistent="true"
         android:summary="Delay to try to install an apk."
         android:title="Timeout install" />
-    <org.remoteandroid.tools.ListPreferenceMultiSelect 
+    <org.droid2droid.tools.ListPreferenceMultiSelect 
 	    multi:checkAll="check" 
 	    multi:separator="|"
 	    android:defaultValue="1"
@@ -36,7 +36,7 @@
         android:key="discover.mode"
         android:summary="Binded, Anonymous,no bluetooth, no ethernet"
         android:title="Discover mode" />
-	<org.remoteandroid.tools.ListPreferenceMultiSelect 
+	<org.droid2droid.tools.ListPreferenceMultiSelect 
 	    multi:checkAll="check" 
 	    multi:separator="|"
 	    android:defaultValue="0"
@@ -46,7 +46,7 @@
 	    android:summary="Use for bind remote android"
 	    android:entries="@array/remote_bind_codes"
 	    android:entryValues="@array/remote_bind_values"/>
-    <org.remoteandroid.tools.ListPreferenceMultiSelect 
+    <org.droid2droid.tools.ListPreferenceMultiSelect 
 	    multi:checkAll="check" 
 	    multi:separator="|"
         android:defaultValue="0"
@@ -57,7 +57,7 @@
         android:persistent="true"
         android:summary="Force install an apk ?"
         android:title="Flag for install" />
-	<org.remoteandroid.tools.ListPreferenceMultiSelect 
+	<org.droid2droid.tools.ListPreferenceMultiSelect 
 	    multi:checkAll="check" 
 	    multi:separator="|"
 	    android:defaultValue="1"
