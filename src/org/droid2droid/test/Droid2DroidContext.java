@@ -37,7 +37,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
@@ -51,19 +50,17 @@ public class Droid2DroidContext
 		void onUpdated();
 	}
 	
-	Handler mHandler=new Handler();
+	private final OnRemoteAndroidContextUpdated mCallback;
+	protected String mUri;
+	protected enum State { Idle,BindingRemoteAndroid,InstallingApk,BindingRemoteObject,UnbindingRemoteObject,BindApplicationContext};
+	protected State mState=State.Idle;
 	
-	OnRemoteAndroidContextUpdated mCallback;
-	String mUri;
-	enum State { Idle,BindingRemoteAndroid,InstallingApk,BindingRemoteObject,UnbindingRemoteObject,BindApplicationContext};
-	State mState=State.Idle;
+	private final Droid2DroidManager mManager;
+	private ServiceConnection  mConn;
+	protected RemoteAndroid mRemoteAndroid;
+	protected TestRemoteObject mRemoteObject;
 	
-	Droid2DroidManager mManager;
-	ServiceConnection  mConn;
-	RemoteAndroid mRemoteAndroid;
-	TestRemoteObject mRemoteObject;
-	
-	CharSequence mStatus="idle";
+	protected CharSequence mStatus="idle";
 	
 	public Droid2DroidContext(Context context,Droid2DroidManager manager,OnRemoteAndroidContextUpdated callback)
 	{

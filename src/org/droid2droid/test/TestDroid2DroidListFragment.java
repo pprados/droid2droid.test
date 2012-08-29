@@ -87,8 +87,6 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 {
 	public static final String TAG="RA-Test";
 	
-	private static final int DIALOG_MARKET=1; // FIXME
-	
 	private static final String URL_NOT_KNOWN="Not known";
 	private static final String EXTRA_BURST="burst";
 
@@ -101,8 +99,6 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	private MenuItem mDiscoverMenu;
 	private MenuItem mBurstMenu;
 	
-	private boolean mIsDiscover;
-
 	private final List<String> mItems=new ArrayList<String>();
 
 	private volatile ListRemoteAndroidInfo mDiscoveredAndroid;
@@ -438,12 +434,10 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				SharedPreferences preferences=mPreferences;
 				int flags=Integer.parseInt(preferences.getString("discover.mode","1"));
 				mManager.startDiscover(flags,DISCOVER_INFINITELY);
-				mIsDiscover=true;
 			}
 			else
 			{
 				mManager.cancelDiscover();
-				mIsDiscover=false;
 			}
 		}
 		else if (id == R.id.add)
