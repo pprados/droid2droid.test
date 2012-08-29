@@ -1,0 +1,3 @@
+[submodule "d2d_buzzer_tests"]
+	path = d2d_buzzer_tests
+	url = https://code.google.com/p/droid2droid.buzzertst/
