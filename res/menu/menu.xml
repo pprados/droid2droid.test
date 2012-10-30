@@ -6,7 +6,6 @@
     	  android:icon="@android:drawable/ic_menu_add"
           android:visible="true"
           android:showAsAction="ifRoom|withText" />
-           />
     <item android:id="@+id/discover"
     	  android:icon="@android:drawable/ic_menu_search"
           android:title="@string/discover"
@@ -20,7 +19,7 @@
           android:checked="false"
           android:visible="true"
           android:showAsAction="ifRoom|withText" />
-           />
+
     <item android:id="@+id/burst"
           android:title="@string/burst"
     	  android:icon="@drawable/ic_menu_burst"
@@ -28,7 +27,7 @@
           android:checked="false"
           android:visible="true"
           android:showAsAction="withText" />
-           />
+
     <item android:id="@+id/config"
           android:title="@string/config"
     	  android:icon="@android:drawable/ic_menu_manage"

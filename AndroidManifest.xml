@@ -5,7 +5,7 @@
       android:versionName="1.0"
       android:installLocation="auto"
 >
-    <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="11"/>
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="11"/>
 	<user-feature android:name="android.hardware.nfc" android:required="false"/>
     
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -29,6 +29,7 @@
     >
 		<service 
 			android:name=".TestDroid2DroidService" 
+			android:exported="true"
 		>
 			<intent-filter>
 				<action android:name="org.droid2droid.test.TestService"/>

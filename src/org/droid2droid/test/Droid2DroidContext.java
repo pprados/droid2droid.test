@@ -58,6 +58,7 @@ public class Droid2DroidContext
 	private final Droid2DroidManager mManager;
 	private ServiceConnection  mConn;
 	protected RemoteAndroid mRemoteAndroid;
+	protected boolean binded;
 	protected TestRemoteObject mRemoteObject;
 	
 	protected CharSequence mStatus="idle";
@@ -198,7 +199,7 @@ public class Droid2DroidContext
 			public void onServiceDisconnected(ComponentName name)
 			{
 				mState=State.Idle;
-				mRemoteObject=null;
+				binded=false;
 				setStatus("Binding disconnected");
 			}
 			
@@ -207,6 +208,7 @@ public class Droid2DroidContext
 			{
 				mState=State.Idle;
 				mRemoteObject=TestRemoteObject.Stub.asInterface(service);
+				binded=true;
 				setStatus("Remote object binded");
 			}
 		};
@@ -226,7 +228,10 @@ public class Droid2DroidContext
 		if (rc==false)
 			setStatus("Unbind impossible");
 		else
+		{
+			binded=false;
 			setStatus("Unbinded.");
+		}
 	}
 	public void invoke(Context context)
 	{

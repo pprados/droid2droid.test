@@ -54,8 +54,8 @@
         android:id="@+id/status"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/install"
-        android:layout_alignRight="@+id/cmds"
+        android:layout_alignLeft="@id/install"
+        android:layout_alignRight="@id/active"
         android:layout_below="@+id/install"
         android:ellipsize="marquee"
         android:textAppearance="?android:attr/textAppearanceMedium" />

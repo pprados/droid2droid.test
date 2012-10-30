@@ -79,7 +79,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-// Checkbox pour la découverte des ProximityNetwork
+// Checkbox pour la decouverte des ProximityNetwork
 public class TestDroid2DroidListFragment extends SherlockListFragment 
 implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextUpdated, OnCheckedChangeListener,
 	ListRemoteAndroidInfo.DiscoverListener,
@@ -87,7 +87,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 {
 	public static final String TAG="RA-Test";
 	
-	private static final String URL_NOT_KNOWN="Not known";
+	private static final String URL_NOT_KNOWN="[hack] ips://localhost"; // FIXME "Not known";
 	private static final String EXTRA_BURST="burst";
 
 	private static final int REQUEST_CONNECT_CODE=1;
@@ -330,6 +330,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
     				boolean enabled=(racontext.mRemoteAndroid!=null);
     				caches.mInstall.setEnabled(enabled);
     				caches.mBind.setEnabled(enabled);
+    				caches.mBind.setChecked(racontext.binded);
     				caches.mInvoke.setEnabled(racontext.mRemoteObject!=null);
     				caches.mStatus.setText(racontext.mStatus);
     				return view;

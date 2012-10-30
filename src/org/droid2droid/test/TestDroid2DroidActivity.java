@@ -53,11 +53,11 @@ public class TestDroid2DroidActivity extends MarketSherlockFragmentActivity
 {
 	public static final String	TAG		= "RA-Test";
 
-	private FragmentManager					mFragmentManager;
+	private FragmentManager				mFragmentManager;
 
 	private TestDroid2DroidListFragment	mFragment;
 	
-	private ImageView						mQrCode;
+	private ImageView					mQrCode;
 	private boolean						mQrCodeBig;
 
 	@TargetApi(11)
