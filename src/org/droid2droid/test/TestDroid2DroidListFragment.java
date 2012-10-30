@@ -82,8 +82,7 @@ import com.actionbarsherlock.view.MenuItem;
 // Checkbox pour la decouverte des ProximityNetwork
 public class TestDroid2DroidListFragment extends SherlockListFragment 
 implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextUpdated, OnCheckedChangeListener,
-	ListRemoteAndroidInfo.DiscoverListener,
-	CreateNdefMessageCallback
+	ListRemoteAndroidInfo.DiscoverListener
 {
 	public static final String TAG="RA-Test";
 	
@@ -116,7 +115,17 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		if (VERSION.SDK_INT>VERSION_CODES.ICE_CREAM_SANDWICH)
 		{
 			mNfcAdapter=NfcAdapter.getDefaultAdapter(activity);
-			mNfcAdapter.setNdefPushMessageCallback(this, activity);
+			mNfcAdapter.setNdefPushMessageCallback(
+				// Hook for compatibility
+				new CreateNdefMessageCallback()
+				{
+					@Override
+					public NdefMessage createNdefMessage(NfcEvent event)
+					{
+						return TestDroid2DroidListFragment.this.createNdefMessage(event);
+					}
+					
+				}, activity);
 		}
 	}
 	
@@ -565,6 +574,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 				Log.d(TAG,"Invoke "+position);
 				if (mBurst)
 				{
+					final boolean toogle=((ToggleButton)view).isChecked();
 					for (final Droid2DroidContext ra:mRemoteAndroids) // FIXME
 					{
 						mExecutors.execute(new Runnable()
@@ -572,20 +582,21 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 							@Override
 							public void run()
 							{
-								if (!((ToggleButton)view).isChecked())
-									context.unbindService(getActivity());
+								if (!toogle)
+									ra.unbindService(getActivity());
 								else
-									context.bindService(getActivity());
+									ra.bindService(getActivity());
 							}
 						});
 					}					
 				}
 				else
 				{
+					final Droid2DroidContext ra=mRemoteAndroids.get(position);
 					if (!((ToggleButton)view).isChecked())
-						context.unbindService(getActivity());
+						ra.unbindService(getActivity());
 					else
-						context.bindService(getActivity());
+						ra.bindService(getActivity());
 				}
 				break;
 				
@@ -643,7 +654,7 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 	{
 		return mManager;
 	}
-    @Override
+//    @Override
     @TargetApi(14)
 	public NdefMessage createNdefMessage(NfcEvent event) 
 	{
