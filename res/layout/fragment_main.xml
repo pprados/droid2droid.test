@@ -7,10 +7,10 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp" >
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+<!--     <RelativeLayout -->
+<!--         android:id="@+id/relativeLayout1" -->
+<!--         android:layout_width="fill_parent" -->
+<!--         android:layout_height="fill_parent" > -->
 
         <fragment
             android:id="@+id/fragment"
@@ -27,6 +27,6 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_launcher" />
-    </RelativeLayout>
+<!--     </RelativeLayout> -->
 
 </LinearLayout>

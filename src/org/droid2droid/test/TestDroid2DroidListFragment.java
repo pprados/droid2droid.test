@@ -115,17 +115,21 @@ implements View.OnClickListener, OnItemSelectedListener, OnRemoteAndroidContextU
 		if (VERSION.SDK_INT>VERSION_CODES.ICE_CREAM_SANDWICH)
 		{
 			mNfcAdapter=NfcAdapter.getDefaultAdapter(activity);
-			mNfcAdapter.setNdefPushMessageCallback(
-				// Hook for compatibility
-				new CreateNdefMessageCallback()
-				{
-					@Override
-					public NdefMessage createNdefMessage(NfcEvent event)
+			if (mNfcAdapter!=null)
+			{
+				mNfcAdapter.setNdefPushMessageCallback(
+					// Hook for compatibility
+					new CreateNdefMessageCallback()
 					{
-						return TestDroid2DroidListFragment.this.createNdefMessage(event);
-					}
-					
-				}, activity);
+						@Override
+						public NdefMessage createNdefMessage(NfcEvent event)
+						{
+							return TestDroid2DroidListFragment.this.createNdefMessage(event);
+						}
+						
+					}, activity);
+
+			}
 		}
 	}
 	
